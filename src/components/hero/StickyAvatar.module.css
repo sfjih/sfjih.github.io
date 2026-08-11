@@ -1,0 +1,59 @@
+.stickyWrap {
+  position: relative;
+  height: 200vh;
+}
+
+.sticky {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  display: grid;
+  height: 100vh;
+  overflow: hidden;
+  place-items: center;
+  pointer-events: none;
+}
+
+.avatar {
+  position: relative;
+  width: 400px;
+  height: 456px;
+  perspective: 1200px;
+  transform-origin: 50% 50%;
+}
+
+.faces {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  backface-visibility: hidden;
+  object-fit: cover;
+}
+
+.front {
+  transform: rotateY(0deg);
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+@media (max-width: 809px) {
+  .avatar {
+    width: 181.14px;
+    height: 206.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar,
+  .faces {
+    transform: none;
+  }
+}

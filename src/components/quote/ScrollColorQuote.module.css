@@ -1,0 +1,43 @@
+.scene {
+  position: relative;
+  height: 150vh;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  display: grid;
+  height: 100vh;
+  padding: var(--page-pad);
+  place-items: center;
+}
+
+.quote {
+  width: min(100%, var(--content-max));
+  margin: 0 auto;
+  font-size: clamp(48px, 7vw, 104px);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+  text-align: center;
+  text-wrap: balance;
+}
+
+@media (max-width: 809px) {
+  .quote {
+    max-width: 350px;
+    font-size: clamp(42px, 13vw, 58px);
+    line-height: 1;
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene {
+    height: 100vh;
+  }
+
+  .sticky {
+    position: relative;
+  }
+}

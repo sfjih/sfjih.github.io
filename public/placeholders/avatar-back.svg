@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="912" viewBox="0 0 800 912" role="img" aria-labelledby="title description">
+  <title id="title">头像背面占位图</title>
+  <desc id="description">用于首版布局的原创几何人物背面占位图，不代表真实头像。</desc>
+  <rect width="800" height="912" fill="#111111"/>
+  <path d="M0 612c113-62 222-93 327-93 194 0 351 100 473 300v93H0V612Z" fill="#FAF7F3"/>
+  <ellipse cx="404" cy="334" rx="178" ry="218" fill="#D8FF4F"/>
+  <path d="M225 334c0-157 71-245 211-245 123 0 188 86 197 258-70-64-143-96-217-96-71 0-134 28-191 83Z" fill="#FAF7F3"/>
+  <path d="M340 350c37-22 80-22 128 0M353 430c34 16 69 16 104 0" fill="none" stroke="#111111" stroke-linecap="round" stroke-width="12"/>
+  <rect x="34" y="34" width="220" height="48" rx="24" fill="#D8FF4F"/>
+  <text x="144" y="66" fill="#111111" font-family="Archivo, sans-serif" font-size="20" font-weight="700" letter-spacing="3" text-anchor="middle">BACK · PLACEHOLDER</text>
+</svg>
