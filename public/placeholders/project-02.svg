@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">角色系统练习占位图</title>
+  <desc id="desc">深色背景上的双人轮廓与编号排版</desc>
+  <rect width="1200" height="900" fill="#151515"/>
+  <path d="M0 150H1200M0 450H1200M0 750H1200" stroke="#FAF7F3" stroke-opacity=".22" stroke-width="2"/>
+  <circle cx="430" cy="322" r="135" fill="#FAF7F3"/>
+  <path d="M184 820C208 581 292 470 430 470S652 581 676 820Z" fill="#FAF7F3"/>
+  <circle cx="750" cy="350" r="112" fill="#C8BCAF"/>
+  <path d="M556 820C579 611 643 510 750 510S921 611 944 820Z" fill="#C8BCAF"/>
+  <text x="74" y="122" fill="#FAF7F3" font-family="Arial, sans-serif" font-size="54" font-weight="700">02 / SYSTEM</text>
+</svg>

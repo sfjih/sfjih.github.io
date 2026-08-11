@@ -1,0 +1,127 @@
+.section {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(360px, 500px);
+  gap: clamp(60px, 12vw, 170px);
+  width: min(calc(100% - (var(--page-pad) * 2)), var(--content-max));
+  margin: 0 auto;
+  padding: clamp(110px, 16vw, 210px) 0;
+  border-top: 1px solid var(--ink);
+}
+
+.copy > p,
+.copy > span,
+.form label > span,
+.status {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.copy h2 {
+  max-width: 620px;
+  margin: clamp(42px, 8vw, 100px) 0 36px;
+  font-size: clamp(52px, 7vw, 92px);
+  font-weight: 600;
+  letter-spacing: -0.065em;
+  line-height: 0.9;
+  text-wrap: balance;
+}
+
+.copy > span,
+.status {
+  color: var(--muted);
+}
+
+.form {
+  width: 100%;
+  max-width: 500px;
+}
+
+.form label {
+  display: block;
+  margin-bottom: 30px;
+}
+
+.form label > span {
+  display: block;
+  margin-bottom: 11px;
+}
+
+.form input,
+.form textarea {
+  width: 100%;
+  padding: 15px 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  border-radius: 0;
+  outline: none;
+  font-size: 18px;
+  transition: border-bottom-width 160ms ease;
+}
+
+.form textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.form input:focus,
+.form textarea:focus {
+  border-bottom-width: 3px;
+}
+
+.form button {
+  width: 100%;
+  min-height: 58px;
+  margin-top: 10px;
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  transition: color 260ms ease, background 260ms ease;
+}
+
+.form button:hover,
+.form button:focus-visible {
+  color: var(--ink);
+  background: transparent;
+}
+
+.form button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.status {
+  margin-top: 14px;
+  text-align: center;
+}
+
+@media (max-width: 809px) {
+  .section {
+    grid-template-columns: 1fr;
+    gap: 72px;
+    padding: 96px 0;
+  }
+
+  .copy h2 {
+    margin: 36px 0 28px;
+    font-size: clamp(48px, 15vw, 66px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form input,
+  .form textarea,
+  .form button {
+    transition-duration: 0.01ms;
+  }
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">活动识别练习占位图</title>
+  <desc id="desc">靛蓝色画面中的重复字形与黑色边框</desc>
+  <rect width="1200" height="900" fill="#3455A5"/>
+  <rect x="54" y="54" width="1092" height="792" fill="none" stroke="#111" stroke-width="4"/>
+  <g fill="#FAF7F3" font-family="Arial, sans-serif" font-size="180" font-weight="700" letter-spacing="-12">
+    <text x="86" y="255">OPEN</text><text x="530" y="255" fill="#111">OPEN</text>
+    <text x="86" y="474" fill="#111">OPEN</text><text x="530" y="474">OPEN</text>
+    <text x="86" y="693">OPEN</text><text x="530" y="693" fill="#111">OPEN</text>
+  </g>
+  <circle cx="1030" cy="742" r="64" fill="#E9D75D" stroke="#111" stroke-width="4"/>
+</svg>

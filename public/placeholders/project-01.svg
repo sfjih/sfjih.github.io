@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">视觉叙事练习占位图</title>
+  <desc id="desc">暖白背景上的黑色编辑网格与朱红圆形</desc>
+  <rect width="1200" height="900" fill="#EEE8E0"/>
+  <path d="M80 80H1120V820H80Z" fill="none" stroke="#111" stroke-width="3"/>
+  <path d="M80 282H1120M80 484H1120M350 80V820M850 80V820" fill="none" stroke="#111" stroke-width="2"/>
+  <circle cx="850" cy="282" r="155" fill="#D8492F"/>
+  <path d="M146 681H786" stroke="#111" stroke-width="42"/>
+  <path d="M146 748H618" stroke="#111" stroke-width="18"/>
+</svg>

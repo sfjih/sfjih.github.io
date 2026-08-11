@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">AIGC 动态实验占位图</title>
+  <desc id="desc">暖灰背景上的分帧序列与运动轨迹</desc>
+  <rect width="1200" height="900" fill="#D9D1C6"/>
+  <g fill="none" stroke="#111" stroke-width="3">
+    <rect x="72" y="72" width="310" height="756"/><rect x="445" y="72" width="310" height="756"/><rect x="818" y="72" width="310" height="756"/>
+  </g>
+  <circle cx="227" cy="300" r="92" fill="#111"/>
+  <circle cx="600" cy="450" r="92" fill="#D8492F"/>
+  <circle cx="973" cy="600" r="92" fill="#FAF7F3" stroke="#111" stroke-width="3"/>
+  <path d="M227 300C380 300 445 390 600 450S820 590 973 600" fill="none" stroke="#111" stroke-dasharray="14 18" stroke-width="4"/>
+  <text x="91" y="795" fill="#FAF7F3" font-family="Arial, sans-serif" font-size="30">FRAME 01</text>
+  <text x="465" y="795" fill="#111" font-family="Arial, sans-serif" font-size="30">FRAME 12</text>
+  <text x="838" y="795" fill="#111" font-family="Arial, sans-serif" font-size="30">FRAME 24</text>
+</svg>
