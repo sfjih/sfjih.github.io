@@ -361,6 +361,7 @@ test("SLG detail exposes its non-commercial label and safe video controls", asyn
   await expect(video).toHaveAttribute("controls", "")
   await expect(video).toHaveAttribute("poster", "/works/slg-aigc-practice/keyframe-01.webp")
   await expect(video).not.toHaveAttribute("autoplay", /.*/)
+  await expect(video).toHaveCSS("object-fit", "contain")
   expect(await video.evaluate((element) => (element as HTMLVideoElement).autoplay)).toBe(false)
   expect(await video.evaluate((element) => (element as HTMLVideoElement).error)).toBeNull()
   await expect.poll(() => video.evaluate((element) => {
