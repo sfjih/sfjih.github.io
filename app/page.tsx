@@ -9,14 +9,16 @@ import { getFeaturedProjects } from "@/src/content/projects"
 
 export default function HomePage() {
   return (
-    <main>
-      <HeroBio />
-      <ScrollColorQuote text="设计不是装饰，而是让复杂的信息变得清楚、可信、值得停留。" />
-      <ServiceList />
-      <ProjectGrid projects={getFeaturedProjects()} showHeading />
-      <FlipCardGrid />
-      <ContactSection />
+    <>
+      <main>
+        <HeroBio />
+        <ScrollColorQuote text="设计不是装饰，而是让复杂的信息变得清楚、可信、值得停留。" />
+        <ServiceList />
+        <ProjectGrid projects={getFeaturedProjects()} showHeading />
+        <FlipCardGrid />
+        <ContactSection />
+      </main>
       <SiteFooter />
-    </main>
+    </>
   )
 }
