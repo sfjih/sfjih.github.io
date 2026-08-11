@@ -94,20 +94,24 @@ for (const viewport of [
   })
 }
 
-test("homepage and work navigation reach exact homepage landmarks", async ({ page }) => {
-  await page.goto("/")
-  await waitForPageEntry(page)
-  await openNavigation(page)
-  await page.getByRole("link", { name: "Services" }).click()
-  await expect(page).toHaveURL(`${baseURL}/#services`)
-  await expect(page.locator("#services")).toBeVisible()
+test("all navigation items reach their exact homepage landmarks", async ({ page }) => {
+  for (const target of [
+    { id: "about", label: "About", origin: "/" },
+    { id: "services", label: "Services", origin: "/work" },
+    { id: "work", label: "Projects", origin: validDetailRoute },
+    { id: "contact", label: "Contact", origin: "/" },
+  ] as const) {
+    await test.step(`${target.label} from ${target.origin}`, async () => {
+      await page.goto(target.origin)
+      await waitForPageEntry(page)
+      await openNavigation(page)
 
-  await page.goto("/work")
-  await waitForPageEntry(page)
-  await openNavigation(page)
-  await page.getByRole("link", { name: "About" }).click()
-  await expect(page).toHaveURL(`${baseURL}/#about`)
-  await expect(page.locator("#about")).toBeVisible()
+      await page.getByRole("link", { name: target.label }).click()
+
+      await expect(page).toHaveURL(`${baseURL}/#${target.id}`)
+      await expect(page.locator(`#${target.id}`)).toBeVisible()
+    })
+  }
 })
 
 test("desktop project grid keeps the specified 16px gap", async ({ page }) => {
@@ -203,12 +207,52 @@ test("keyboard focus flips a proof card", async ({ page }) => {
   })).toBe(-1)
 })
 
-test("page transition settles in a visible state", async ({ page }) => {
+test("client route transition exposes an intermediate state before settling", async ({ page }) => {
   await page.goto("/work")
   await waitForPageEntry(page)
 
-  await expect(page.locator("main").locator("..")).toBeVisible()
-  await expect(page.getByRole("heading", { level: 1, name: /作品\s*档案/ })).toBeVisible()
+  await page.evaluate(() => {
+    const samples: Array<{ opacity: number; translateY: number }> = []
+    ;(window as typeof window & { __pageTransitionSamples?: typeof samples })
+      .__pageTransitionSamples = samples
+
+    let framesRemaining = 180
+    const capture = () => {
+      const pageContent = document.querySelector("main")?.parentElement
+      if (pageContent) {
+        const style = getComputedStyle(pageContent)
+        const transform = style.transform
+        samples.push({
+          opacity: Number(style.opacity),
+          translateY: transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42,
+        })
+      }
+
+      framesRemaining -= 1
+      if (framesRemaining > 0) requestAnimationFrame(capture)
+    }
+
+    requestAnimationFrame(capture)
+  })
+
+  await page.getByRole("link", { name: "视觉叙事练习，查看项目" }).click()
+  await expect(page).toHaveURL(`${baseURL}${validDetailRoute}`)
+  await waitForPageEntry(page)
+
+  const samples = await page.evaluate(() => (
+    (window as typeof window & {
+      __pageTransitionSamples?: Array<{ opacity: number; translateY: number }>
+    }).__pageTransitionSamples ?? []
+  ))
+
+  expect(samples.some(({ opacity }) => opacity > 0.02 && opacity < 0.98)).toBe(true)
+  expect(samples.some(({ translateY }) => Math.abs(translateY) > 0.5)).toBe(true)
+  await expect(page.locator("main").locator("..")).toHaveCSS("opacity", "1")
+  await expect.poll(async () => page.locator("main").locator("..").evaluate((element) => {
+    const transform = getComputedStyle(element).transform
+    return transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42
+  })).toBe(0)
+  await expect(page.getByRole("heading", { level: 1, name: "视觉叙事练习" })).toBeVisible()
 })
 
 test("project routes use exact destinations and page landmarks", async ({ page }) => {
