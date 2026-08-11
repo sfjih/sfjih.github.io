@@ -25,7 +25,7 @@ function QuoteWord({ index, progress, reduced, total, word }: QuoteWordProps) {
 
   return (
     <motion.span aria-hidden="true" style={{ color: reduced ? "#111111" : color }}>
-      {word}{index < total - 1 ? " " : ""}
+      {word}
     </motion.span>
   )
 }
@@ -33,7 +33,7 @@ function QuoteWord({ index, progress, reduced, total, word }: QuoteWordProps) {
 export function ScrollColorQuote({ text }: ScrollColorQuoteProps) {
   const quoteRef = useRef<HTMLElement>(null)
   const reduced = useReducedMotion() ?? false
-  const words = text.split(" ")
+  const words = Array.from(text)
   const { scrollYProgress } = useScroll({
     target: quoteRef,
     offset: ["start end", "end start"],
