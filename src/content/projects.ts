@@ -140,7 +140,7 @@ export const projects: Project[] = [
     year: "2025–2026",
     role: "赛事主视觉 / 视觉设计",
     summary: "围绕赛事主视觉完成构图、视觉元素、字体色彩与场景适配，建立统一的 KV 表达。",
-    cover: "/works/golden-knight-key-visual/event-kv.webp",
+    cover: "/works/golden-knight-key-visual/kv-poster.webp",
     featured: true,
     sections: [
       {
@@ -150,8 +150,13 @@ export const projects: Project[] = [
       },
       {
         type: "image",
-        src: "/works/golden-knight-key-visual/event-kv.webp",
-        alt: "金骑士杯马术赛事蓝色主视觉 KV",
+        src: "/works/golden-knight-key-visual/kv-poster.webp",
+        alt: "金骑士杯绿色赛事宣传主视觉 KV",
+      },
+      {
+        type: "image",
+        src: "/works/golden-knight-key-visual/onsite-application.webp",
+        alt: "金骑士杯赛事主视觉现场应用",
       },
       {
         type: "text",
@@ -174,7 +179,7 @@ export const projects: Project[] = [
     year: "2025–2026",
     role: "海报设计 / 信息编排",
     summary: "覆盖赛事宣传、公司宣传、招商与策划文本四类内容，以版式建立清晰的信息层级。",
-    cover: "/works/promotional-posters/event-poster.webp",
+    cover: "/works/promotional-posters/february-event-cover.webp",
     featured: true,
     sections: [
       {
@@ -184,8 +189,8 @@ export const projects: Project[] = [
       },
       {
         type: "image",
-        src: "/works/promotional-posters/event-poster.webp",
-        alt: "马术赛事宣传海报版式",
+        src: "/works/promotional-posters/february-event-cover.webp",
+        alt: "二月赛事文本封面海报",
       },
       {
         type: "imagePair",
@@ -222,7 +227,7 @@ export const projects: Project[] = [
     year: "2025–2026",
     role: "物料设计 / 打样沟通 / 供应商对接 / 现场执行",
     summary: "从物料设计、打样沟通到供应商对接与现场执行，15 天内推进赛事工装及志愿者马甲 200 余件成品交付。",
-    cover: "/works/event-materials/group-photo.webp",
+    cover: "/works/event-materials/apparel-short.webp",
     featured: true,
     sections: [
       {

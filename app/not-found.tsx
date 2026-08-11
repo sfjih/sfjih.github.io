@@ -11,7 +11,7 @@ export default function NotFound() {
           <div>
             <h1>这一页还没有被装订。</h1>
             <p className={styles.notFoundMessage}>
-              你访问的页面不存在，或作品仍在整理中。可以回到作品档案继续浏览。
+              你访问的页面不存在。可以回到作品档案继续浏览。
             </p>
             <Link className={styles.notFoundLink} href="/work">
               查看全部作品 →

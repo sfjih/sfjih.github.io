@@ -74,28 +74,29 @@
   border-bottom-width: 3px;
 }
 
-.form button {
+.form a {
+  display: grid;
   width: 100%;
   min-height: 58px;
   margin-top: 10px;
+  place-items: center;
   color: var(--paper);
   background: var(--ink);
   border: 1px solid var(--ink);
   border-radius: 999px;
-  cursor: pointer;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
   transition: color 260ms ease, background 260ms ease;
 }
 
-.form button:hover,
-.form button:focus-visible {
+.form a:hover,
+.form a:focus-visible {
   color: var(--ink);
   background: transparent;
 }
 
-.form button:focus-visible {
+.form a:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 4px;
 }
@@ -121,7 +122,7 @@
 @media (prefers-reduced-motion: reduce) {
   .form input,
   .form textarea,
-  .form button {
+  .form a {
     transition-duration: 0.01ms;
   }
 }

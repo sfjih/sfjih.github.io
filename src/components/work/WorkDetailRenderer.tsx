@@ -19,7 +19,7 @@ function MediaPlaceholder({ label }: { label: string }) {
   return (
     <div aria-label={label} className={styles.mediaPlaceholder} role="img">
       <span aria-hidden="true">MEDIA / PENDING</span>
-      <p>作品媒体整理中</p>
+      <p>作品媒体暂不可用</p>
     </div>
   )
 }
@@ -28,7 +28,7 @@ function MediaImage({ alt, sizes, src }: MediaImageProps) {
   const [hasError, setHasError] = useState(false)
 
   if (hasError) {
-    return <MediaPlaceholder label={`${alt}（媒体整理中）`} />
+    return <MediaPlaceholder label={`${alt}（媒体暂不可用）`} />
   }
 
   return (
@@ -46,7 +46,7 @@ function MediaVideo({ poster, src, title }: Extract<ProjectSection, { type: "vid
   const [hasError, setHasError] = useState(false)
 
   if (hasError) {
-    return <MediaPlaceholder label={`${title}（媒体整理中）`} />
+    return <MediaPlaceholder label={`${title}（媒体暂不可用）`} />
   }
 
   return (

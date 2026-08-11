@@ -166,8 +166,23 @@
 
 .renderer {
   display: grid;
-  gap: clamp(80px, 13vw, 170px);
+  gap: 32px;
   padding-bottom: clamp(110px, 15vw, 190px);
+}
+
+.renderer > .textSection,
+.renderer > .facts,
+.renderer > .textSection + .figure,
+.renderer > .textSection + .imagePair,
+.renderer > .textSection + .videoFrame,
+.renderer > .facts + .figure,
+.renderer > .facts + .imagePair,
+.renderer > .facts + .videoFrame {
+  margin-top: 48px;
+}
+
+.renderer > :first-child {
+  margin-top: 0;
 }
 
 .textSection,
@@ -410,6 +425,20 @@
 }
 
 @media (max-width: 809px) {
+  .renderer {
+    gap: 16px;
+  }
+
+  .renderer > .textSection,
+  .renderer > .facts,
+  .renderer > .textSection + .figure,
+  .renderer > .textSection + .imagePair,
+  .renderer > .textSection + .videoFrame,
+  .renderer > .facts + .figure,
+  .renderer > .facts + .imagePair,
+  .renderer > .facts + .videoFrame {
+    margin-top: 32px;
+  }
   .listingHero {
     min-height: 640px;
     grid-template-columns: 1fr;

@@ -6,8 +6,8 @@
 
 .hero {
   display: flex;
-  align-items: flex-end;
-  padding: 0 var(--page-pad) clamp(42px, 7vw, 88px);
+  align-items: center;
+  padding: clamp(110px, 14vh, 168px) var(--page-pad) clamp(72px, 10vh, 120px);
 }
 
 .heroInner,
@@ -79,7 +79,8 @@
 
 @media (max-width: 809px) {
   .hero {
-    padding-bottom: 36px;
+    padding-top: 120px;
+    padding-bottom: 72px;
   }
 
   .heroTitle {

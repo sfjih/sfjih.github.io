@@ -23,25 +23,25 @@ export type NavItem = {
 
 export const profile: Profile = {
   name: "何宇航",
-  title: "视觉设计师 / AIGC 内容设计",
-  bio: "作品内容正在整理。",
+  title: "平面设计师 / 品牌视觉设计",
+  bio: "专注品牌视觉、IP 全案与赛事物料设计，让创意从画面延伸到真实场景。",
   contactLinks: [
-    { label: "Email", href: "mailto:placeholder@example.com" },
-    { label: "简历", href: "#resume" },
+    { label: "Email", href: "mailto:hyh2107567710@163.com" },
+    { label: "简历", href: "/何宇航-个人简历.pdf" },
   ],
 }
 
 export const services: Service[] = [
-  { title: "视觉设计", description: "本地占位服务说明。" },
-  { title: "AIGC 内容", description: "本地占位服务说明。" },
-  { title: "动态素材", description: "本地占位服务说明。" },
-  { title: "品牌与 IP", description: "本地占位服务说明。" },
+  { title: "品牌与 IP", description: "角色设定、Logo、色彩规范、表情与周边延展。" },
+  { title: "赛事主视觉", description: "赛事 KV、核心视觉元素与应用规范。" },
+  { title: "宣传海报", description: "活动海报、传播物料与版式设计。" },
+  { title: "物料落地", description: "工装、精神堡垒、票证及现场制作协同。" },
 ]
 
 export const proofCards: ProofCard[] = [
-  { label: "案例", value: "04", description: "可替换的作品案例占位。" },
-  { label: "服务", value: "04", description: "可替换的服务方向占位。" },
-  { label: "状态", value: "整理中", description: "正式作品内容将陆续补充。" },
+  { label: "精选作品", value: "05", description: "已收录五个精选作品案例。" },
+  { label: "量产交付", value: "200+", description: "赛事工装与志愿者马甲成品交付。" },
+  { label: "赛事执行", value: "04", description: "金骑士杯已执行四站赛事。" },
 ]
 
 export const navItems: NavItem[] = [

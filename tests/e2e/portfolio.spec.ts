@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test"
 const baseURL = "http://127.0.0.1:3000"
 const expectedProjects = [
   ["耿耿全案设计", "/work/genggeng-brand-system", 17],
-  ["金骑士杯赛事主视觉", "/work/golden-knight-key-visual", 2],
+  ["金骑士杯赛事主视觉", "/work/golden-knight-key-visual", 3],
   ["宣传海报设计", "/work/promotional-posters", 5],
   ["赛事物料设计与现场落地", "/work/event-materials", 15],
   ["AIGC / SLG 个人练习", "/work/slg-aigc-practice", 12],
@@ -72,7 +72,7 @@ async function animationFrame(page: Page) {
 
 async function readAvatarTransform(page: Page) {
   return page.evaluate(() => {
-    const front = document.querySelector<HTMLImageElement>('img[alt="头像正面占位图"]')
+    const front = document.querySelector<HTMLImageElement>('img[alt="何宇航证件照，黑白正面"]')
     const faces = front?.parentElement
     const avatar = faces?.parentElement
 
@@ -312,6 +312,70 @@ test("client route transition exposes an intermediate state before settling", as
   await expect(page.getByRole("heading", { level: 1, name: "耿耿全案设计" })).toBeVisible()
 })
 
+for (const viewport of [
+  { name: "desktop", width: 1440, height: 900 },
+  { name: "tablet", width: 1024, height: 900 },
+  { name: "phone", width: 390, height: 844 },
+]) {
+  test(`${viewport.name} hero keeps the title clear of the lower viewport`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await page.goto("/")
+    await waitForPageEntry(page)
+
+    const box = await page.getByRole("heading", { level: 1 }).boundingBox()
+    expect(box).not.toBeNull()
+    const center = (box?.y ?? 0) + (box?.height ?? 0) / 2
+    expect(center).toBeGreaterThan(viewport.height * 0.28)
+    expect(center).toBeLessThan(viewport.height * 0.66)
+  })
+}
+
+test("homepage uses real profile content and a two-tone scrolling portrait", async ({ page }) => {
+  await page.goto("/")
+  await waitForPageEntry(page)
+
+  await expect(page.getByRole("heading", { level: 1, name: "平面设计师 / 品牌视觉设计" })).toBeVisible()
+  await expect(page.getByRole("link", { name: "Email" })).toHaveAttribute(
+    "href",
+    "mailto:hyh2107567710@163.com",
+  )
+  await expect(page.getByRole("link", { name: "简历" })).toHaveAttribute("href", "/何宇航-个人简历.pdf")
+  await expect(page.getByText(/占位|整理中|placeholder@example\.com/)).toHaveCount(0)
+
+  const front = page.getByAltText("何宇航证件照，黑白正面")
+  const back = page.getByAltText("何宇航证件照，彩色背面")
+  await expect(front).toHaveAttribute("src", /portrait\.webp/)
+  await expect(back).toHaveAttribute("src", /portrait\.webp/)
+  await expect(front).toHaveCSS("filter", "grayscale(1)")
+  await expect(back).toHaveCSS("filter", "none")
+})
+
+for (const viewport of [
+  { name: "desktop", width: 1440, height: 900, mediaGap: 32 },
+  { name: "phone", width: 390, height: 844, mediaGap: 16 },
+]) {
+  test(`${viewport.name} keeps consecutive detail media compact`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await page.goto("/work/genggeng-brand-system")
+    await waitForPageEntry(page)
+
+    const gaps = await page.evaluate(() => {
+      const renderer = document.querySelector('[class*="renderer"]')
+      if (!renderer) throw new Error("Project renderer is missing")
+      const children = Array.from(renderer.children)
+      const isMedia = (element: Element) => element.matches("figure, section[aria-label='项目图片组']")
+      return children.slice(1).flatMap((element, index) => {
+        const previous = children[index]
+        if (!isMedia(previous) || !isMedia(element)) return []
+        return [element.getBoundingClientRect().top - previous.getBoundingClientRect().bottom]
+      })
+    })
+
+    expect(gaps.length).toBeGreaterThan(0)
+    expect(Math.max(...gaps)).toBeLessThanOrEqual(viewport.mediaGap + 1)
+  })
+}
+
 test("every project card reaches its exact detail route and heading", async ({ page }) => {
   for (const [title, route] of expectedProjects) {
     await test.step(title, async () => {
@@ -335,7 +399,7 @@ test("every detail route loads all of its real images", async ({ page }) => {
       await page.goto(route)
       await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible()
       await expectLoadedImages(page, imageCount)
-      await expect(page.getByText("作品媒体整理中", { exact: true })).toHaveCount(0)
+      await expect(page.getByText(/占位|整理中|placeholder@example\.com/)).toHaveCount(0)
     })
   }
 })
@@ -381,7 +445,7 @@ test("reduced motion collapses the sticky avatar scene into visible normal flow"
   await waitForPageEntry(page)
 
   const state = await page.evaluate(() => {
-    const front = document.querySelector<HTMLImageElement>('img[alt="头像正面占位图"]')
+    const front = document.querySelector<HTMLImageElement>('img[alt="何宇航证件照，黑白正面"]')
     const faces = front?.parentElement
     const avatar = faces?.parentElement
     const stage = avatar?.parentElement

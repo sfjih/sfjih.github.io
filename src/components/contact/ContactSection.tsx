@@ -10,7 +10,7 @@ export function ContactSection() {
         <span>{profile.name} · {profile.title}</span>
       </div>
 
-      <form aria-describedby="contact-status" aria-label="联系表单（尚未接入）" className={styles.form}>
+      <form aria-label="联系信息" className={styles.form}>
         <label>
           <span>你的称呼</span>
           <input autoComplete="name" name="name" placeholder="姓名 / 团队" type="text" />
@@ -23,8 +23,7 @@ export function ContactSection() {
           <span>想聊的内容</span>
           <textarea name="message" placeholder="简单介绍项目、时间和期待。" rows={5} />
         </label>
-        <button aria-describedby="contact-status" type="button">联系功能将在内容阶段接入</button>
-        <p className={styles.status} id="contact-status">联系功能将在内容阶段接入</p>
+        <a href="mailto:hyh2107567710@163.com">发送邮件</a>
       </form>
     </section>
   )

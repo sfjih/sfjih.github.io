@@ -10,7 +10,7 @@ export function SiteFooter() {
           <a href={link.href} key={link.label}>{link.label}</a>
         ))}
       </nav>
-      <p>© {new Date().getFullYear()} · 内容整理中</p>
+      <p>© {new Date().getFullYear()} · 何宇航</p>
     </footer>
   )
 }

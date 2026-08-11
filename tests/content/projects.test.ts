@@ -104,6 +104,18 @@ describe("project content", () => {
     }
   })
 
+  it("uses the approved event covers without a group-photo material cover", () => {
+    expect(getProjectBySlug("golden-knight-key-visual")?.cover).toBe(
+      "/works/golden-knight-key-visual/kv-poster.webp",
+    )
+    expect(getProjectBySlug("promotional-posters")?.cover).toBe(
+      "/works/promotional-posters/february-event-cover.webp",
+    )
+    expect(getProjectBySlug("event-materials")?.cover).toBe(
+      "/works/event-materials/apparel-short.webp",
+    )
+  })
+
   it("contains no placeholder project data", () => {
     const content = JSON.stringify(projects)
 

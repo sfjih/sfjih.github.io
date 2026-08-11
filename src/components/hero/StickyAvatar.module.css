@@ -38,6 +38,7 @@
 
 .front {
   transform: rotateY(0deg);
+  filter: grayscale(1);
 }
 
 .back {

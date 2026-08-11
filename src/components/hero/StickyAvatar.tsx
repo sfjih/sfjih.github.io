@@ -27,20 +27,20 @@ export function StickyAvatar({ bioRef }: StickyAvatarProps) {
       >
         <motion.div className={styles.faces} style={{ rotateY: reduced ? 0 : rotateY }}>
           <Image
-            alt="头像正面占位图"
+            alt="何宇航证件照，黑白正面"
             className={`${styles.face} ${styles.front}`}
             fill
             priority
             sizes="(max-width: 809px) 181px, 400px"
-            src="/placeholders/avatar-front.svg"
+            src="/portrait.webp"
           />
           <Image
-            alt="头像背面占位图"
+            alt="何宇航证件照，彩色背面"
             className={`${styles.face} ${styles.back}`}
             fill
             priority
             sizes="(max-width: 809px) 181px, 400px"
-            src="/placeholders/avatar-back.svg"
+            src="/portrait.webp"
           />
         </motion.div>
       </motion.div>
