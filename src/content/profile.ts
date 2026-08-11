@@ -45,8 +45,8 @@ export const proofCards: ProofCard[] = [
 ]
 
 export const navItems: NavItem[] = [
-  { label: "首页", href: "/" },
-  { label: "作品", href: "/work" },
-  { label: "关于", href: "#about" },
-  { label: "联系", href: "#contact" },
+  { label: "About", href: "/#about" },
+  { label: "Services", href: "/#services" },
+  { label: "Projects", href: "/#work" },
+  { label: "Contact", href: "/#contact" },
 ]

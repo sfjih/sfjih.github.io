@@ -9,6 +9,8 @@ it("keeps its initial markup deterministic before observer fallback mounts", asy
     Reflect.deleteProperty(globalThis, "IntersectionObserver")
     const withoutObserver = renderToString(<SectionHeading text="Deterministic heading" />)
 
+    expect(withoutObserver).not.toMatch(/opacity:0|blur\(10px\)|translateY\(10px\)/)
+
     Object.defineProperty(globalThis, "IntersectionObserver", {
       configurable: true,
       value: function IntersectionObserver() {},

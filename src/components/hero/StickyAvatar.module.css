@@ -52,8 +52,19 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .stickyWrap {
+    height: auto;
+  }
+
+  .sticky {
+    position: relative;
+    top: auto;
+    height: auto;
+    overflow: visible;
+  }
+
   .avatar,
   .faces {
-    transform: none;
+    transform: none !important;
   }
 }

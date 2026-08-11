@@ -1,7 +1,7 @@
 "use client"
 
-import { motion, useReducedMotion, type Variants } from "motion/react"
-import { useEffect, useState } from "react"
+import { motion, useAnimationControls, useReducedMotion, type Variants } from "motion/react"
+import { useEffect, useRef } from "react"
 
 type SectionHeadingProps = {
   as?: "h1" | "h2"
@@ -35,54 +35,40 @@ const wordVariants: Variants = {
   },
 }
 
-const fallbackContainerVariants: Variants = {
-  hidden: {},
-  visible: {},
-}
-
-const fallbackWordVariants: Variants = {
-  hidden: wordVariants.hidden,
-  visible: {
-    filter: "blur(0px)",
-    opacity: 1,
-    transition: {
-      duration: 0.12,
-    },
-    y: 0,
-  },
-}
-
 export function SectionHeading({ as = "h2", className, text }: SectionHeadingProps) {
   const reduced = useReducedMotion() ?? false
-  const [observerSupport, setObserverSupport] = useState<"pending" | "supported" | "unsupported">(
-    "pending",
-  )
+  const controls = useAnimationControls()
+  const headingRef = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      setObserverSupport(typeof IntersectionObserver === "undefined" ? "unsupported" : "supported")
+    const heading = headingRef.current
+    if (reduced || !heading || typeof IntersectionObserver === "undefined") return
+
+    controls.set("hidden")
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      void controls.start("visible")
+      observer.disconnect()
     })
+    observer.observe(heading)
 
-    return () => window.cancelAnimationFrame(frame)
-  }, [])
+    return () => observer.disconnect()
+  }, [controls, reduced])
 
-  const fallback = !reduced && observerSupport === "unsupported"
-  const animateOnView = !reduced && observerSupport === "supported"
   const words = text.split(" ")
   const sharedProps = {
-    animate: fallback ? "visible" : undefined,
+    animate: controls,
     className,
-    initial: reduced ? false : "hidden",
-    variants: fallback ? fallbackContainerVariants : containerVariants,
-    viewport: { once: true },
-    whileInView: animateOnView ? "visible" : undefined,
+    initial: false,
+    ref: headingRef,
+    variants: containerVariants,
   } as const
 
   const content = words.map((word, index) => (
     <motion.span
       aria-hidden="true"
       key={`${word}-${index}`}
-      variants={reduced ? undefined : fallback ? fallbackWordVariants : wordVariants}
+      variants={reduced ? undefined : wordVariants}
     >
       {word}
       {index < words.length - 1 ? " " : ""}

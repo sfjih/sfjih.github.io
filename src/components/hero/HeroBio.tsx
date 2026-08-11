@@ -22,7 +22,7 @@ export function HeroBio() {
 
       <div className={avatarStyles.stickyWrap}>
         <StickyAvatar bioRef={bioRef} />
-        <section className={styles.bio} id="bio-section" ref={bioRef}>
+        <section className={styles.bio} id="about" ref={bioRef}>
           <div className={styles.bioInner}>
             <p className={styles.eyebrow}>ABOUT · 01</p>
             <SectionHeading className={styles.bioTitle} text={profile.bio} />
