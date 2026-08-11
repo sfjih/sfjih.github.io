@@ -23,7 +23,7 @@ test("desktop project grid keeps the specified 16px gap", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto("/")
 
-  const projectGrid = page.locator("section#work > div").last()
+  const projectGrid = page.getByTestId("project-grid")
   await expect(projectGrid).toBeVisible()
   await expect(projectGrid).toHaveCSS("gap", "16px")
 })
