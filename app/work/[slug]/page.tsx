@@ -11,13 +11,6 @@ type WorkDetailPageProps = {
   params: Promise<{ slug: string }>
 }
 
-const coverBySlug: Record<string, string> = {
-  "visual-campaign-alpha": "/placeholders/project-01.svg",
-  "character-system-study": "/placeholders/project-02.svg",
-  "event-identity-study": "/placeholders/project-03.svg",
-  "aigc-motion-experiment": "/placeholders/project-04.svg",
-}
-
 export function generateStaticParams() {
   return projects.map(({ slug }) => ({ slug }))
 }
@@ -47,7 +40,6 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
   const projectIndex = projects.findIndex((item) => item.slug === project.slug)
   const previousProject = projects[(projectIndex - 1 + projects.length) % projects.length]
   const nextProject = projects[(projectIndex + 1) % projects.length]
-  const heroSrc = coverBySlug[project.slug] ?? project.cover
 
   return (
     <>
@@ -75,11 +67,11 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
 
         <div className={styles.projectHeroMedia}>
           <Image
-            alt={`${project.title}项目占位封面`}
+            alt={`${project.title}项目封面`}
             fill
             priority
             sizes="100vw"
-            src={heroSrc}
+            src={project.cover}
           />
         </div>
 

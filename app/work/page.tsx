@@ -6,7 +6,7 @@ import { projects } from "@/src/content/projects"
 
 export const metadata: Metadata = {
   title: "作品 | Visual Designer",
-  description: "视觉设计、品牌视觉、角色系统与动态实验作品。",
+  description: "IP 全案、赛事主视觉、宣传海报、赛事物料与 AIGC 个人练习。",
 }
 
 export default function WorkPage() {
@@ -21,7 +21,7 @@ export default function WorkPage() {
             </h1>
           </div>
           <p className={styles.listingIntro}>
-            一组仍在持续整理的视觉实践：从图像系统、角色语言，到动态内容实验。
+            以平面视觉为核心，收录 IP 全案、赛事主视觉、宣传海报与现场物料落地，并补充 AIGC 个人练习。
           </p>
         </header>
         <div className={styles.listingGrid}>

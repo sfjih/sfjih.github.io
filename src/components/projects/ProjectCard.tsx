@@ -7,16 +7,7 @@ type ProjectCardProps = {
   project: Project
 }
 
-const placeholderBySlug: Record<string, string> = {
-  "visual-campaign-alpha": "/placeholders/project-01.svg",
-  "character-system-study": "/placeholders/project-02.svg",
-  "event-identity-study": "/placeholders/project-03.svg",
-  "aigc-motion-experiment": "/placeholders/project-04.svg",
-}
-
 export function ProjectCard({ project }: ProjectCardProps) {
-  const cover = placeholderBySlug[project.slug] ?? project.cover
-
   return (
     <article className={styles.card}>
       <Link
@@ -25,7 +16,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         href={`/work/${project.slug}`}
       >
         <div className={styles.media}>
-          <Image alt="" fill sizes="(max-width: 809px) 100vw, 50vw" src={cover} />
+          <Image alt="" fill sizes="(max-width: 809px) 100vw, 50vw" src={project.cover} />
           <span className={styles.viewCue} aria-hidden="true">VIEW</span>
         </div>
         <div className={styles.meta}>
