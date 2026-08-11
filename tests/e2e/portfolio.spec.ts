@@ -1,7 +1,51 @@
 import { expect, test, type Page } from "@playwright/test"
 
 const baseURL = "http://127.0.0.1:3000"
-const validDetailRoute = "/work/visual-campaign-alpha"
+const expectedProjects = [
+  ["耿耿全案设计", "/work/genggeng-brand-system", 17],
+  ["金骑士杯赛事主视觉", "/work/golden-knight-key-visual", 2],
+  ["宣传海报设计", "/work/promotional-posters", 5],
+  ["赛事物料设计与现场落地", "/work/event-materials", 15],
+  ["AIGC / SLG 个人练习", "/work/slg-aigc-practice", 12],
+] as const
+const validDetailRoute = expectedProjects[0][1]
+type ProjectExpectation = (typeof expectedProjects)[number]
+
+async function expectProjectOrder(page: Page, expected: readonly ProjectExpectation[]) {
+  const links = page.getByTestId("project-grid").getByRole("link")
+  await expect(links).toHaveCount(expected.length)
+
+  for (const [index, [title, route]] of expected.entries()) {
+    await expect(links.nth(index)).toHaveAttribute("aria-label", `${title}，查看项目`)
+    await expect(links.nth(index)).toHaveAttribute("href", route)
+  }
+}
+
+async function expectLoadedImages(page: Page, expectedCount: number) {
+  const images = page.locator("main img")
+  await expect(images).toHaveCount(expectedCount)
+
+  for (let index = 0; index < expectedCount; index += 1) {
+    const image = images.nth(index)
+    await image.scrollIntoViewIfNeeded()
+    await expect.poll(() => image.evaluate((element) => {
+      const media = element as HTMLImageElement
+      return {
+        complete: media.complete,
+        naturalHeight: media.naturalHeight,
+        naturalWidth: media.naturalWidth,
+      }
+    })).toMatchObject({
+      complete: true,
+      naturalHeight: expect.any(Number),
+      naturalWidth: expect.any(Number),
+    })
+    expect(await image.evaluate((element) => (element as HTMLImageElement).naturalHeight))
+      .toBeGreaterThan(0)
+    expect(await image.evaluate((element) => (element as HTMLImageElement).naturalWidth))
+      .toBeGreaterThan(0)
+  }
+}
 
 async function waitForPageEntry(page: Page) {
   const pageContent = page.locator("main").locator("..")
@@ -65,6 +109,19 @@ for (const viewport of [
     expect(overflow).toBe(false)
   })
 }
+
+test("homepage shows exactly the four approved commercial projects", async ({ page }) => {
+  await page.goto("/")
+
+  await expectProjectOrder(page, expectedProjects.slice(0, 4))
+  await expect(page.getByText("AIGC / SLG 个人练习", { exact: true })).toHaveCount(0)
+})
+
+test("work archive shows all five projects in the approved order", async ({ page }) => {
+  await page.goto("/work")
+
+  await expectProjectOrder(page, expectedProjects)
+})
 
 for (const viewport of [
   { name: "desktop", width: 1440, expectedWidth: 320 },
@@ -186,7 +243,7 @@ test("project hover reveals its cue and scales the image", async ({ page }) => {
   await page.goto("/work")
   await waitForPageEntry(page)
 
-  const project = page.getByRole("link", { name: "视觉叙事练习，查看项目" })
+  const project = page.getByRole("link", { name: "耿耿全案设计，查看项目" })
   await project.hover()
 
   await expect(project.locator("img")).toHaveCSS("transform", /matrix\(1\.04/)
@@ -235,7 +292,7 @@ test("client route transition exposes an intermediate state before settling", as
     requestAnimationFrame(capture)
   })
 
-  await page.getByRole("link", { name: "视觉叙事练习，查看项目" }).click()
+  await page.getByRole("link", { name: "耿耿全案设计，查看项目" }).click()
   await expect(page).toHaveURL(`${baseURL}${validDetailRoute}`)
   await waitForPageEntry(page)
 
@@ -252,21 +309,68 @@ test("client route transition exposes an intermediate state before settling", as
     const transform = getComputedStyle(element).transform
     return transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42
   })).toBe(0)
-  await expect(page.getByRole("heading", { level: 1, name: "视觉叙事练习" })).toBeVisible()
+  await expect(page.getByRole("heading", { level: 1, name: "耿耿全案设计" })).toBeVisible()
 })
 
-test("project routes use exact destinations and page landmarks", async ({ page }) => {
-  await page.goto("/work")
-  await waitForPageEntry(page)
+test("every project card reaches its exact detail route and heading", async ({ page }) => {
+  for (const [title, route] of expectedProjects) {
+    await test.step(title, async () => {
+      await page.goto("/work")
+      await waitForPageEntry(page)
+      await page.getByRole("link", { name: `${title}，查看项目` }).click()
 
-  await page.getByRole("link", { name: "视觉叙事练习，查看项目" }).click()
+      await expect(page).toHaveURL(`${baseURL}${route}`)
+      await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible()
 
-  await expect(page).toHaveURL(`${baseURL}${validDetailRoute}`)
-  await expect(page.getByRole("heading", { level: 1, name: "视觉叙事练习" })).toBeVisible()
+      await page.getByRole("link", { name: "返回全部作品" }).click()
+      await expect(page).toHaveURL(`${baseURL}/work`)
+      await expect(page.getByRole("heading", { level: 1, name: /作品\s*档案/ })).toBeVisible()
+    })
+  }
+})
 
-  await page.getByRole("link", { name: "返回全部作品" }).click()
-  await expect(page).toHaveURL(`${baseURL}/work`)
-  await expect(page.getByRole("heading", { level: 1, name: /作品\s*档案/ })).toBeVisible()
+test("every detail route loads all of its real images", async ({ page }) => {
+  for (const [title, route, imageCount] of expectedProjects) {
+    await test.step(title, async () => {
+      await page.goto(route)
+      await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible()
+      await expectLoadedImages(page, imageCount)
+      await expect(page.getByText("作品媒体整理中", { exact: true })).toHaveCount(0)
+    })
+  }
+})
+
+test("detail images preserve their full source composition", async ({ page }) => {
+  await page.goto("/work/promotional-posters")
+
+  const images = page.locator("main img")
+  await expect(images).toHaveCount(5)
+  for (let index = 0; index < await images.count(); index += 1) {
+    await expect(images.nth(index)).toHaveCSS("object-fit", "contain")
+  }
+})
+
+test("SLG detail exposes its non-commercial label and safe video controls", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/work/slg-aigc-practice")
+
+  await expect(page.getByText("个人练习 / 非商业项目", { exact: true }).first()).toBeVisible()
+
+  const video = page.locator('video[aria-label="冰雪生存 SLG AIGC 竖屏成片"]')
+  await video.scrollIntoViewIfNeeded()
+  await expect(video).toHaveAttribute("controls", "")
+  await expect(video).toHaveAttribute("poster", "/works/slg-aigc-practice/keyframe-01.webp")
+  await expect(video).not.toHaveAttribute("autoplay", /.*/)
+  expect(await video.evaluate((element) => (element as HTMLVideoElement).autoplay)).toBe(false)
+  expect(await video.evaluate((element) => (element as HTMLVideoElement).error)).toBeNull()
+  await expect.poll(() => video.evaluate((element) => {
+    const media = element as HTMLVideoElement
+    return { height: media.videoHeight, width: media.videoWidth }
+  })).toEqual({ height: 1920, width: 1080 })
+  await expect(video.locator("source")).toHaveAttribute(
+    "src",
+    "/works/slg-aigc-practice/final-video.mp4",
+  )
 })
 
 test("reduced motion collapses the sticky avatar scene into visible normal flow", async ({ page }) => {

@@ -1,6 +1,6 @@
-# 作品集网站骨架
+# 作品集网站
 
-这是一个基于 Next.js 的视觉设计师作品集首版骨架，已包含主要路由、响应式布局、核心动效和自动化验证。当前展示的项目名称、文案、图片和联系方式均为清晰标记的本地占位内容，不代表最终作品。
+这是一个基于 Next.js 的视觉设计师作品集，已填充五项真实作品内容，并保留经过验证的响应式布局、页面动效和本地自动化检查。
 
 ## 本地启动
 
@@ -17,7 +17,11 @@ npm run dev
 
 - `/`：首页，包含个人简介、滚动引言、服务、精选作品、翻转卡片和联系占位区域。
 - `/work`：作品列表。
-- `/work/[slug]`：作品详情，由本地项目数据生成。
+- `/work/genggeng-brand-system`：耿耿全案设计。
+- `/work/golden-knight-key-visual`：金骑士杯赛事主视觉。
+- `/work/promotional-posters`：宣传海报设计。
+- `/work/event-materials`：赛事物料设计与现场落地。
+- `/work/slg-aigc-practice`：AIGC / SLG 个人练习，明确标注为个人练习 / 非商业项目。
 
 首版不包含博客、CMS、登录、数据库或真实表单提交。
 
@@ -25,9 +29,9 @@ npm run dev
 
 - `src/content/profile.ts`：个人资料、服务、证明卡片和导航项。
 - `src/content/projects.ts`：作品列表、详情页模块和项目元数据。
-- `public/placeholders/`：首版专用占位素材。
+- `public/works/`：五项作品的网页优化图片与视频副本。
 
-下一阶段才会从经用户确认的 SLG 项目和 IP 项目中复制真实素材，并替换上述占位数据。
+首页固定展示前四项作品；`/work` 按上述顺序展示全部五项，AIGC / SLG 个人练习固定最后。
 
 ## 完整验证
 
@@ -38,15 +42,17 @@ npm run lint
 npm run test
 npm run build
 npm run test:e2e
+git diff --check
 ```
 
 `test:e2e` 使用 Playwright Chromium 启动生产构建，并检查桌面、平板和手机视口、路由以及 reduced-motion 降级。
 
 ## 来源项目规则
 
-以下两个来源项目在当前阶段始终为只读：
+以下三个素材来源始终为只读：
 
+- `C:\Users\HE\Desktop\gengengyuhuai\全案设计目前已完成素材\已完成_FD7014改色版\耿耿全案`
+- `E:\CodexWorkspaces\01_Projects_项目工作区\hyh-visual-designer-portfolio\public\assets\works\event-materials`
 - `C:\Users\HE\Documents\个人简历网站，slg广告`
-- `C:\Users\HE\Documents\ip全案设计`
 
-不在来源目录内修改、删除、重命名或初始化 Git；不覆盖用户已有变更。当前首版不从来源项目复制正式作品素材。
+不在来源目录内修改、删除、重命名或初始化 Git；网页使用的副本只在本项目 `public/works/` 内维护。
