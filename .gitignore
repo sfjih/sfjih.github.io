@@ -4,6 +4,7 @@ out/
 coverage/
 playwright-report/
 test-results/
+.worktrees/
 .env*
 !.env
 !.env.example
