@@ -1,0 +1,25 @@
+.stage {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+.page {
+  min-height: 100vh;
+}
+
+.veil {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  pointer-events: none;
+  background: var(--ink);
+  transform-origin: right center;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veil {
+    display: none;
+  }
+}
