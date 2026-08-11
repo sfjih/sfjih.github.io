@@ -1,6 +1,7 @@
 "use client"
 
 import { motion, useReducedMotion, type Variants } from "motion/react"
+import { useEffect, useState } from "react"
 
 type SectionHeadingProps = {
   as?: "h1" | "h2"
@@ -34,24 +35,54 @@ const wordVariants: Variants = {
   },
 }
 
+const fallbackContainerVariants: Variants = {
+  hidden: {},
+  visible: {},
+}
+
+const fallbackWordVariants: Variants = {
+  hidden: wordVariants.hidden,
+  visible: {
+    filter: "blur(0px)",
+    opacity: 1,
+    transition: {
+      duration: 0.12,
+    },
+    y: 0,
+  },
+}
+
 export function SectionHeading({ as = "h2", className, text }: SectionHeadingProps) {
   const reduced = useReducedMotion() ?? false
-  const canObserve = typeof IntersectionObserver !== "undefined"
-  const staticHeading = reduced || !canObserve
+  const [observerSupport, setObserverSupport] = useState<"pending" | "supported" | "unsupported">(
+    "pending",
+  )
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setObserverSupport(typeof IntersectionObserver === "undefined" ? "unsupported" : "supported")
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [])
+
+  const fallback = !reduced && observerSupport === "unsupported"
+  const animateOnView = !reduced && observerSupport === "supported"
   const words = text.split(" ")
   const sharedProps = {
+    animate: fallback ? "visible" : undefined,
     className,
-    initial: staticHeading ? false : "hidden",
-    variants: containerVariants,
+    initial: reduced ? false : "hidden",
+    variants: fallback ? fallbackContainerVariants : containerVariants,
     viewport: { once: true },
-    whileInView: staticHeading ? undefined : "visible",
+    whileInView: animateOnView ? "visible" : undefined,
   } as const
 
   const content = words.map((word, index) => (
     <motion.span
       aria-hidden="true"
       key={`${word}-${index}`}
-      variants={staticHeading ? undefined : wordVariants}
+      variants={reduced ? undefined : fallback ? fallbackWordVariants : wordVariants}
     >
       {word}
       {index < words.length - 1 ? " " : ""}
