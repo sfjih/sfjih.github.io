@@ -42,7 +42,8 @@ export function ScrollColorQuote({ text }: ScrollColorQuoteProps) {
   return (
     <section className={styles.scene} ref={quoteRef}>
       <div className={styles.sticky}>
-        <p aria-label={text} className={styles.quote}>
+        <p className={styles.quote}>
+          <span className={styles.srOnly}>{text}</span>
           {words.map((word, index) => (
             <QuoteWord
               index={index}
