@@ -459,6 +459,49 @@ test("homepage hero uses the single sticky portrait that continues into the turn
   expect((portraitBox ? portraitBox.y + portraitBox.height : 0)).toBeLessThanOrEqual(900)
 })
 
+test("mobile hero keeps the title and portrait visibly separated", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 760 })
+  await page.goto("/")
+  await waitForPageEntry(page)
+
+  const title = await page.getByRole("heading", { level: 1 }).boundingBox()
+  const portrait = await page.getByTestId("sticky-avatar").locator("div").first().boundingBox()
+
+  expect(title).not.toBeNull()
+  expect(portrait).not.toBeNull()
+  expect((portrait?.y ?? 0) - ((title?.y ?? 0) + (title?.height ?? 0))).toBeGreaterThanOrEqual(24)
+})
+
+test("mobile about composes greeting portrait and copy without a blank-screen gap", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 760 })
+  await page.goto("/")
+  await waitForPageEntry(page)
+  await page.locator("#about").scrollIntoViewIfNeeded()
+  await animationFrame(page)
+
+  const geometry = await page.evaluate(() => {
+    const greeting = document.querySelector<HTMLElement>('[data-testid="bio-greeting"]')
+    const portrait = document.querySelector<HTMLElement>('[data-testid="sticky-avatar"] > div')
+    const copy = document.querySelector<HTMLElement>('#about [class*="bioInner"]')
+    if (!greeting || !portrait || !copy) throw new Error("Mobile about composition is incomplete")
+
+    const greetingBox = greeting.getBoundingClientRect()
+    const portraitBox = portrait.getBoundingClientRect()
+    const copyBox = copy.getBoundingClientRect()
+    return {
+      greetingToPortrait: portraitBox.top - greetingBox.bottom,
+      portraitToCopy: copyBox.top - portraitBox.bottom,
+      copyBottom: copyBox.bottom,
+    }
+  })
+
+  expect.soft(geometry.greetingToPortrait).toBeGreaterThanOrEqual(18)
+  expect.soft(geometry.greetingToPortrait).toBeLessThanOrEqual(96)
+  expect.soft(geometry.portraitToCopy).toBeGreaterThanOrEqual(24)
+  expect.soft(geometry.portraitToCopy).toBeLessThanOrEqual(96)
+  expect.soft(geometry.copyBottom).toBeLessThanOrEqual(736)
+})
+
 test("homepage Chinese title keeps readable line spacing and clears the scroll note", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto("/")

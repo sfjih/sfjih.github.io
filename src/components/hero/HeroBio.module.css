@@ -124,6 +124,10 @@
     padding-bottom: 72px;
   }
 
+  .heroInner {
+    transform: translateY(clamp(-120px, -14vh, -96px));
+  }
+
   .heroTitle {
     max-width: 350px;
     font-size: clamp(54px, 17vw, 76px);
@@ -148,6 +152,7 @@
     grid-template-columns: 1fr;
     gap: 18px;
     align-items: flex-start;
+    transform: translateY(clamp(-120px, -13vh, -84px));
   }
 
   .bioPortraitSpace {
