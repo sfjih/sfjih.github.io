@@ -23,6 +23,25 @@
   text-wrap: balance;
 }
 
+.headingScene {
+  height: auto;
+}
+
+.headingSticky {
+  position: relative;
+  display: block;
+  height: auto;
+  padding: 0;
+}
+
+.headingQuote {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(42px, 5.8vw, 78px);
+  line-height: 0.98;
+  text-align: left;
+}
+
 .srOnly {
   position: absolute;
   width: 1px;
@@ -42,6 +61,11 @@
     line-height: 1;
     text-align: left;
   }
+
+  .headingQuote {
+    margin-top: 20px;
+    font-size: clamp(38px, 12vw, 54px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -49,7 +73,15 @@
     height: 100vh;
   }
 
+  .headingScene {
+    height: auto;
+  }
+
   .sticky {
     position: relative;
+  }
+
+  .quote > span[aria-hidden="true"] {
+    color: #111111 !important;
   }
 }

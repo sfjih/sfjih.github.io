@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { useState } from "react"
 import type { ProjectSection } from "@/src/content/projects"
 import styles from "./WorkDetailRenderer.module.css"
@@ -11,7 +10,6 @@ type WorkDetailRendererProps = {
 
 type MediaImageProps = {
   alt: string
-  sizes: string
   src: string
 }
 
@@ -24,7 +22,7 @@ function MediaPlaceholder({ label }: { label: string }) {
   )
 }
 
-function MediaImage({ alt, sizes, src }: MediaImageProps) {
+function MediaImage({ alt, src }: MediaImageProps) {
   const [hasError, setHasError] = useState(false)
 
   if (hasError) {
@@ -32,11 +30,12 @@ function MediaImage({ alt, sizes, src }: MediaImageProps) {
   }
 
   return (
-    <Image
+    // The selected work images are already optimized locally; natural dimensions prevent artificial gutters.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       alt={alt}
-      fill
+      className={styles.mediaImage}
       onError={() => setHasError(true)}
-      sizes={sizes}
       src={src}
     />
   )
@@ -81,7 +80,7 @@ function renderSection(section: ProjectSection, index: number) {
       return (
         <figure className={styles.figure} key={`image-${index}`}>
           <div className={styles.singleMedia}>
-            <MediaImage alt={section.alt} sizes="(max-width: 809px) 100vw, 1180px" src={section.src} />
+            <MediaImage alt={section.alt} src={section.src} />
           </div>
           {section.caption ? <figcaption>{section.caption}</figcaption> : null}
         </figure>
@@ -93,11 +92,33 @@ function renderSection(section: ProjectSection, index: number) {
             <div className={styles.pairedMedia} key={`${image.src}-${imageIndex}`}>
               <MediaImage
                 alt={image.alt}
-                sizes="(max-width: 809px) 100vw, 50vw"
                 src={image.src}
               />
             </div>
           ))}
+        </section>
+      )
+    case "mediaGrid":
+      return (
+        <section className={styles.mediaGallery} key={`media-grid-${index}`}>
+          <div className={styles.galleryHeading}>
+            <p className={styles.sectionIndex}>{String(index + 1).padStart(2, "0")}</p>
+            <div>
+              <p>{section.label}</p>
+              <h2>{section.heading}</h2>
+            </div>
+          </div>
+          <div
+            aria-label={`${section.heading} ${section.label}`}
+            className={styles.mediaGrid}
+            data-variant={section.variant}
+          >
+            {section.images.map((image, imageIndex) => (
+              <div className={styles.gridMedia} key={`${image.src}-${imageIndex}`}>
+                <MediaImage alt={image.alt} src={image.src} />
+              </div>
+            ))}
+          </div>
         </section>
       )
     case "video":

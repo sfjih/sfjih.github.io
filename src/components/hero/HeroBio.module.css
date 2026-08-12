@@ -6,6 +6,7 @@
 
 .hero {
   display: flex;
+  grid-area: 1 / 1;
   align-items: center;
   padding: clamp(110px, 14vh, 168px) var(--page-pad) clamp(72px, 10vh, 120px);
 }
@@ -14,6 +15,12 @@
 .bioInner {
   width: min(100%, var(--content-max));
   margin: 0 auto;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
 }
 
 .eyebrow,
@@ -37,7 +44,10 @@
 
 .heroTitle {
   max-width: 1050px;
+  margin-right: auto;
+  margin-left: auto;
   font-size: clamp(62px, 10vw, 154px);
+  line-height: 1;
 }
 
 .scrollNote {
@@ -53,22 +63,53 @@
 .bio {
   z-index: 2;
   display: flex;
+  grid-area: 2 / 1;
   align-items: flex-end;
+  height: 100vh;
   padding: 0 var(--page-pad) clamp(42px, 6vw, 72px);
   pointer-events: none;
 }
 
+.bioGreeting {
+  position: absolute;
+  top: clamp(300px, 46vh, 420px);
+  left: max(var(--page-pad), calc((100vw - var(--content-max)) / 2));
+  margin: 0;
+  font-size: clamp(52px, 5.3vw, 76px);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+
 .bioInner {
   display: grid;
-  grid-template-columns: minmax(180px, 0.8fr) minmax(320px, 1.2fr);
-  gap: clamp(48px, 10vw, 150px);
+  grid-template-columns: minmax(180px, 0.9fr) minmax(280px, 400px) minmax(220px, 0.9fr);
+  gap: clamp(28px, 5vw, 84px);
   align-items: end;
 }
 
+.bioLead,
+.bioCopy {
+  align-self: end;
+}
+
+.bioRole {
+  max-width: 220px;
+  margin: 18px 0 0;
+  font-size: clamp(18px, 1.55vw, 24px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.2;
+}
+
 .bioTitle {
-  max-width: 620px;
+  max-width: 370px;
   margin: 0;
-  font-size: clamp(46px, 6.3vw, 88px);
+  font-size: clamp(17px, 1.5vw, 23px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.45;
+  text-wrap: pretty;
 }
 
 @media (min-width: 810px) and (max-width: 1279px) {
@@ -98,20 +139,37 @@
     padding-bottom: 34px;
   }
 
+  .bioGreeting {
+    top: 28vh;
+    font-size: 44px;
+  }
+
   .bioInner {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: 18px;
     align-items: flex-start;
   }
 
+  .bioPortraitSpace {
+    display: none;
+  }
+
   .bioTitle {
-    max-width: 335px;
-    font-size: clamp(42px, 13vw, 58px);
+    max-width: 310px;
+    font-size: 17px;
+  }
+
+  .bioRole {
+    margin-top: 12px;
+    font-size: 18px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero {
+    z-index: 2;
+  }
+
   .heroTitle span,
   .bioTitle span {
     filter: none;

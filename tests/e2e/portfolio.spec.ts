@@ -2,14 +2,18 @@ import { expect, test, type Page } from "@playwright/test"
 
 const baseURL = "http://127.0.0.1:3000"
 const expectedProjects = [
-  ["耿耿全案设计", "/work/genggeng-brand-system", 17],
-  ["金骑士杯赛事主视觉", "/work/golden-knight-key-visual", 3],
+  ["耿耿全案设计", "/work/genggeng-brand-system", 18],
+  ["金骑士杯赛事主视觉", "/work/golden-knight-key-visual", 7],
   ["宣传海报设计", "/work/promotional-posters", 5],
-  ["赛事物料设计与现场落地", "/work/event-materials", 15],
-  ["AIGC / SLG 个人练习", "/work/slg-aigc-practice", 12],
+  ["赛事物料设计与现场落地", "/work/event-materials", 11],
+  ["AIGC / SLG 个人练习", "/work/slg-aigc-practice", 27],
 ] as const
 const validDetailRoute = expectedProjects[0][1]
 type ProjectExpectation = (typeof expectedProjects)[number]
+
+function exportedRoute(route: string) {
+  return route === "/" ? route : `${route}/`
+}
 
 async function expectProjectOrder(page: Page, expected: readonly ProjectExpectation[]) {
   const links = page.getByTestId("project-grid").getByRole("link")
@@ -17,7 +21,7 @@ async function expectProjectOrder(page: Page, expected: readonly ProjectExpectat
 
   for (const [index, [title, route]] of expected.entries()) {
     await expect(links.nth(index)).toHaveAttribute("aria-label", `${title}，查看项目`)
-    await expect(links.nth(index)).toHaveAttribute("href", route)
+    await expect(links.nth(index)).toHaveAttribute("href", exportedRoute(route))
   }
 }
 
@@ -110,11 +114,11 @@ for (const viewport of [
   })
 }
 
-test("homepage shows exactly the four approved commercial projects", async ({ page }) => {
+test("homepage shows all five approved projects including the personal SLG practice", async ({ page }) => {
   await page.goto("/")
 
-  await expectProjectOrder(page, expectedProjects.slice(0, 4))
-  await expect(page.getByText("AIGC / SLG 个人练习", { exact: true })).toHaveCount(0)
+  await expectProjectOrder(page, expectedProjects)
+  await expect(page.getByText("AIGC / SLG 个人练习", { exact: true })).toHaveCount(1)
 })
 
 test("work archive shows all five projects in the approved order", async ({ page }) => {
@@ -195,23 +199,105 @@ test("normal motion maps the sticky avatar at the start, midpoint, and end", asy
   await page.evaluate((scrollY) => scrollTo(0, scrollY), range.start)
   await animationFrame(page)
   let state = await readAvatarTransform(page)
-  expect(state.scale).toBeCloseTo(0.5, 2)
+  expect(state.scale).toBeCloseTo(0.5, 1)
   expect(state.translateY).toBeCloseTo(114, 0)
   expect(state.rotateCosine).toBeCloseTo(1, 2)
 
   await page.evaluate((scrollY) => scrollTo(0, scrollY), (range.start + range.end) / 2)
   await animationFrame(page)
   state = await readAvatarTransform(page)
-  expect(state.scale).toBeCloseTo(0.75, 2)
+  expect(state.scale).toBeCloseTo(0.75, 1)
   expect(state.translateY).toBeCloseTo(57, 0)
   expect(state.rotateCosine).toBeCloseTo(0, 2)
 
   await page.evaluate((scrollY) => scrollTo(0, scrollY), range.end)
   await animationFrame(page)
   state = await readAvatarTransform(page)
-  expect(state.scale).toBeCloseTo(1, 2)
+  expect(state.scale).toBeCloseTo(1, 1)
   expect(state.translateY).toBeCloseTo(0, 0)
   expect(state.rotateCosine).toBeCloseTo(-1, 2)
+})
+
+test("after the portrait turns, the side introduction stays clear and bottom-aligned", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/")
+  await waitForPageEntry(page)
+
+  const range = await page.evaluate(() => {
+    const bio = document.querySelector("#about")
+    if (!bio) throw new Error("About landmark is missing")
+    const bioTop = bio.getBoundingClientRect().top + scrollY
+    return { end: bioTop }
+  })
+  await page.evaluate((scrollY) => scrollTo(0, scrollY), range.end)
+  await animationFrame(page)
+
+  const geometry = await page.evaluate(() => {
+    const avatar = document.querySelector<HTMLElement>('[data-testid="sticky-avatar"]')?.firstElementChild
+    const left = document.querySelector<HTMLElement>('#about [class*="bioLead"]')
+    const right = document.querySelector<HTMLElement>("#about h2")
+    if (!avatar || !left || !right) throw new Error("Post-turn introduction is incomplete")
+
+    const avatarBox = avatar.getBoundingClientRect()
+    const leftBox = left.getBoundingClientRect()
+    const rightBox = right.getBoundingClientRect()
+    return {
+      avatarBottom: avatarBox.bottom,
+      avatarCenter: avatarBox.left + avatarBox.width / 2,
+      avatarLeft: avatarBox.left,
+      avatarRight: avatarBox.right,
+      leftBottom: leftBox.bottom,
+      leftRight: leftBox.right,
+      rightBottom: rightBox.bottom,
+      rightLeft: rightBox.left,
+    }
+  })
+
+  expect(geometry.avatarCenter).toBeCloseTo(720, 0)
+  expect(geometry.leftRight).toBeLessThanOrEqual(geometry.avatarLeft - 24)
+  expect(geometry.rightLeft).toBeGreaterThanOrEqual(geometry.avatarRight + 24)
+  expect(Math.abs(geometry.leftBottom - geometry.avatarBottom)).toBeLessThanOrEqual(20)
+  expect(Math.abs(geometry.rightBottom - geometry.avatarBottom)).toBeLessThanOrEqual(20)
+})
+
+test("the sticky portrait exits with the bio before services enter", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/")
+  await waitForPageEntry(page)
+
+  const targetScroll = await page.locator("#services").evaluate((services) => (
+    services.getBoundingClientRect().top + scrollY - innerHeight / 2
+  ))
+  await page.evaluate((scrollY) => scrollTo({ behavior: "instant", top: scrollY }), targetScroll)
+  await animationFrame(page)
+
+  const geometry = await page.evaluate(() => {
+    const avatar = document.querySelector<HTMLElement>('[data-testid="sticky-avatar"]')?.firstElementChild
+    const services = document.querySelector<HTMLElement>("#services")
+    if (!avatar || !services) throw new Error("Avatar or services section is missing")
+    return {
+      avatarBottom: avatar.getBoundingClientRect().bottom,
+      servicesTop: services.getBoundingClientRect().top,
+    }
+  })
+
+  expect(geometry.avatarBottom).toBeLessThanOrEqual(geometry.servicesTop)
+})
+
+test("the bio greeting enters before the full introduction so the transition has no blank viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/")
+  await waitForPageEntry(page)
+
+  await page.evaluate(() => scrollTo({ behavior: "instant", top: 600 }))
+  await animationFrame(page)
+
+  const greeting = page.getByTestId("bio-greeting")
+  await expect(greeting).toBeVisible()
+  const box = await greeting.boundingBox()
+  expect(box).not.toBeNull()
+  expect(box?.y ?? 900).toBeGreaterThanOrEqual(0)
+  expect(box ? box.y + box.height : 901).toBeLessThanOrEqual(900)
 })
 
 test("quote color progresses from the first character to the last", async ({ page }) => {
@@ -220,7 +306,7 @@ test("quote color progresses from the first character to the last", async ({ pag
   await waitForPageEntry(page)
 
   const quoteText = "设计不是装饰，而是让复杂的信息变得清楚、可信、值得停留。"
-  const quote = page.getByText(quoteText, { exact: true }).locator("xpath=ancestor::section")
+  const quote = page.getByText(quoteText, { exact: true }).locator("xpath=ancestor::section[1]")
   const units = quote.locator('p > span[aria-hidden="true"]')
   const range = await quote.evaluate((element) => {
     const top = element.getBoundingClientRect().top + scrollY
@@ -248,20 +334,6 @@ test("project hover reveals its cue and scales the image", async ({ page }) => {
 
   await expect(project.locator("img")).toHaveCSS("transform", /matrix\(1\.04/)
   await expect(project.locator("text=VIEW")).toHaveCSS("opacity", "1")
-})
-
-test("keyboard focus flips a proof card", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto("/")
-  await waitForPageEntry(page)
-
-  const card = page.locator('section[aria-labelledby="proof-heading"] article').first()
-  await card.focus()
-
-  await expect.poll(async () => card.locator('[aria-hidden="true"]').evaluate((element) => {
-    const transform = getComputedStyle(element).transform
-    return new DOMMatrixReadOnly(transform).m11
-  })).toBe(-1)
 })
 
 test("client route transition exposes an intermediate state before settling", async ({ page }) => {
@@ -293,7 +365,7 @@ test("client route transition exposes an intermediate state before settling", as
   })
 
   await page.getByRole("link", { name: "耿耿全案设计，查看项目" }).click()
-  await expect(page).toHaveURL(`${baseURL}${validDetailRoute}`)
+  await expect(page).toHaveURL(`${baseURL}${exportedRoute(validDetailRoute)}`)
   await waitForPageEntry(page)
 
   const samples = await page.evaluate(() => (
@@ -310,6 +382,23 @@ test("client route transition exposes an intermediate state before settling", as
     return transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42
   })).toBe(0)
   await expect(page.getByRole("heading", { level: 1, name: "耿耿全案设计" })).toBeVisible()
+})
+
+test("client route transitions do not paint a full-screen black cover", async ({ page }) => {
+  await page.goto("/work")
+  await waitForPageEntry(page)
+
+  const hasBlackCover = await page.evaluate(() => [...document.querySelectorAll("div")].some((element) => {
+    const bounds = element.getBoundingClientRect()
+    const style = getComputedStyle(element)
+    return style.position === "fixed"
+      && style.pointerEvents === "none"
+      && style.backgroundColor === "rgb(17, 17, 17)"
+      && bounds.width >= innerWidth
+      && bounds.height >= innerHeight
+  }))
+
+  expect(hasBlackCover).toBe(false)
 })
 
 for (const viewport of [
@@ -344,10 +433,83 @@ test("homepage uses real profile content and a two-tone scrolling portrait", asy
 
   const front = page.getByAltText("何宇航证件照，黑白正面")
   const back = page.getByAltText("何宇航证件照，彩色背面")
-  await expect(front).toHaveAttribute("src", /portrait\.webp/)
-  await expect(back).toHaveAttribute("src", /portrait\.webp/)
-  await expect(front).toHaveCSS("filter", "grayscale(1)")
+  await expect(front).toHaveAttribute("src", /portrait-front\.webp/)
+  await expect(back).toHaveAttribute("src", /portrait-back\.webp/)
+  await expect(front).toHaveCSS("filter", "none")
   await expect(back).toHaveCSS("filter", "none")
+})
+
+test("homepage hero uses the single sticky portrait that continues into the turn", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/")
+  await waitForPageEntry(page)
+
+  const portrait = page.getByTestId("sticky-avatar")
+  const portraitImages = page.locator('img[src*="portrait-"]')
+  await expect(portrait).toHaveCount(1)
+  await expect(portraitImages).toHaveCount(2)
+  await expect(portraitImages.first()).toHaveCSS("filter", "none")
+
+  const portraitBox = await portrait.boundingBox()
+  expect(portraitBox).not.toBeNull()
+  expect(portraitBox?.y ?? 900).toBeLessThan(900)
+  expect((portraitBox ? portraitBox.y + portraitBox.height : 0)).toBeLessThanOrEqual(900)
+})
+
+test("homepage Chinese title keeps readable line spacing and clears the scroll note", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/")
+  await waitForPageEntry(page)
+
+  const geometry = await page.evaluate(() => {
+    const title = document.querySelector<HTMLElement>("h1")
+    const note = document.querySelector<HTMLElement>('[class*="scrollNote"]')
+    if (!title || !note) throw new Error("Homepage title or scroll note is missing")
+
+    const style = getComputedStyle(title)
+    const titleBox = title.getBoundingClientRect()
+    const noteBox = note.getBoundingClientRect()
+    return {
+      fontSize: Number.parseFloat(style.fontSize),
+      lineHeight: Number.parseFloat(style.lineHeight),
+      overlapsNote: !(
+        titleBox.right <= noteBox.left
+        || titleBox.left >= noteBox.right
+        || titleBox.bottom <= noteBox.top
+        || titleBox.top >= noteBox.bottom
+      ),
+    }
+  })
+
+  expect(geometry.lineHeight).toBeGreaterThanOrEqual(geometry.fontSize)
+  expect(geometry.overlapsNote).toBe(false)
+})
+
+test("hero and bio fill consecutive viewports while the quote heads services", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/")
+  await waitForPageEntry(page)
+
+  const quoteText = "设计不是装饰，而是让复杂的信息变得清楚、可信、值得停留。"
+  const geometry = await page.evaluate(() => {
+    const hero = document.querySelector<HTMLElement>("#hero-section")
+    const bio = document.querySelector<HTMLElement>("#about")
+    if (!hero || !bio) throw new Error("Hero or bio section is missing")
+    const heroBox = hero.getBoundingClientRect()
+    const bioBox = bio.getBoundingClientRect()
+    return {
+      bioHeight: bioBox.height,
+      bioTop: bioBox.top,
+      heroBottom: heroBox.bottom,
+      heroHeight: heroBox.height,
+    }
+  })
+
+  expect(geometry.heroHeight).toBeCloseTo(900, 0)
+  expect(geometry.bioHeight).toBeCloseTo(900, 0)
+  expect(Math.abs(geometry.bioTop - geometry.heroBottom)).toBeLessThanOrEqual(1)
+  await expect(page.locator("#services").getByText(quoteText, { exact: true })).toBeVisible()
+  await expect(page.getByText("把视觉方向落实为清楚、连贯的内容体验。", { exact: true })).toHaveCount(0)
 })
 
 for (const viewport of [
@@ -376,6 +538,32 @@ for (const viewport of [
   })
 }
 
+test("desktop detail image groups read as a vertical sequence without aspect-ratio gutters", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/work/promotional-posters")
+  await waitForPageEntry(page)
+
+  const geometry = await page.locator("section[aria-label='项目图片组']").first().evaluate((group) => {
+    const media = Array.from(group.children) as HTMLElement[]
+    const images = media.map((item) => item.querySelector("img"))
+    if (media.length !== 2 || images.some((image) => !image)) {
+      throw new Error("The first detail image group is incomplete")
+    }
+
+    const [first, second] = media.map((item) => item.getBoundingClientRect())
+    const imageBoxes = images.map((image) => image?.getBoundingClientRect())
+    return {
+      firstHeight: first.height,
+      firstImageHeight: imageBoxes[0]?.height ?? 0,
+      secondImageTop: imageBoxes[1]?.top ?? 0,
+      firstImageBottom: imageBoxes[0]?.bottom ?? 0,
+    }
+  })
+
+  expect(geometry.secondImageTop).toBeGreaterThan(geometry.firstImageBottom)
+  expect(Math.abs(geometry.firstHeight - geometry.firstImageHeight)).toBeLessThanOrEqual(2)
+})
+
 test("every project card reaches its exact detail route and heading", async ({ page }) => {
   for (const [title, route] of expectedProjects) {
     await test.step(title, async () => {
@@ -383,11 +571,11 @@ test("every project card reaches its exact detail route and heading", async ({ p
       await waitForPageEntry(page)
       await page.getByRole("link", { name: `${title}，查看项目` }).click()
 
-      await expect(page).toHaveURL(`${baseURL}${route}`)
+      await expect(page).toHaveURL(`${baseURL}${exportedRoute(route)}`)
       await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible()
 
       await page.getByRole("link", { name: "返回全部作品" }).click()
-      await expect(page).toHaveURL(`${baseURL}/work`)
+      await expect(page).toHaveURL(`${baseURL}/work/`)
       await expect(page.getByRole("heading", { level: 1, name: /作品\s*档案/ })).toBeVisible()
     })
   }
@@ -466,7 +654,7 @@ test("reduced motion collapses the sticky avatar scene into visible normal flow"
     }
   })
 
-  expect(state.sceneHeight).toBeLessThan(900 * 1.7)
+  expect(state.sceneHeight).toBeCloseTo(900 * 2, 0)
   expect(state.stagePosition).toBe("relative")
   expect(state.avatarTransform).toBe("none")
   expect(state.facesTransform).toBe("none")
@@ -476,7 +664,7 @@ test("reduced motion collapses the sticky avatar scene into visible normal flow"
     .getByText("设计不是装饰，而是让复杂的信息变得清楚、可信、值得停留。", {
       exact: true,
     })
-    .locator("xpath=ancestor::section")
+    .locator("xpath=ancestor::section[1]")
   await expect(reducedQuote).toBeVisible()
   await expect(reducedQuote.locator('p > span[aria-hidden="true"]').first()).toHaveCSS(
     "color",

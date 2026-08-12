@@ -20,7 +20,7 @@ export function StickyAvatar({ bioRef }: StickyAvatarProps) {
   const rotateY = useTransform(scrollYProgress, [0, 1], [0, 180])
 
   return (
-    <div className={styles.sticky}>
+    <div className={styles.sticky} data-testid="sticky-avatar">
       <motion.div
         className={styles.avatar}
         style={{ scale: reduced ? 1 : scale, y: reduced ? 0 : y }}
@@ -32,7 +32,7 @@ export function StickyAvatar({ bioRef }: StickyAvatarProps) {
             fill
             priority
             sizes="(max-width: 809px) 181px, 400px"
-            src="/portrait.webp"
+            src="/portrait-front.webp"
           />
           <Image
             alt="何宇航证件照，彩色背面"
@@ -40,7 +40,7 @@ export function StickyAvatar({ bioRef }: StickyAvatarProps) {
             fill
             priority
             sizes="(max-width: 809px) 181px, 400px"
-            src="/portrait.webp"
+            src="/portrait-back.webp"
           />
         </motion.div>
       </motion.div>

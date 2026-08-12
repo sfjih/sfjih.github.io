@@ -11,24 +11,29 @@ export function HeroBio() {
   const bioRef = useRef<HTMLElement>(null)
 
   return (
-    <>
+    <div className={avatarStyles.stickyWrap}>
+      <StickyAvatar bioRef={bioRef} />
       <section className={styles.hero} id="hero-section">
         <div className={styles.heroInner}>
           <p className={styles.eyebrow}>{profile.name} · PORTFOLIO</p>
           <SectionHeading as="h1" className={styles.heroTitle} text={profile.title} />
-          <p className={styles.scrollNote}>SCROLL TO TURN THE PORTRAIT</p>
         </div>
+        <p className={styles.scrollNote}>SCROLL TO TURN THE PORTRAIT</p>
       </section>
 
-      <div className={avatarStyles.stickyWrap}>
-        <StickyAvatar bioRef={bioRef} />
         <section className={styles.bio} id="about" ref={bioRef}>
+          <p className={styles.bioGreeting} data-testid="bio-greeting">你好！</p>
           <div className={styles.bioInner}>
-            <p className={styles.eyebrow}>ABOUT · 01</p>
-            <SectionHeading className={styles.bioTitle} text={profile.bio} />
+            <div className={styles.bioLead}>
+              <p className={styles.eyebrow}>ABOUT · 01</p>
+              <p className={styles.bioRole}>{profile.title}</p>
+            </div>
+            <div aria-hidden="true" className={styles.bioPortraitSpace} />
+            <div className={styles.bioCopy}>
+              <SectionHeading className={styles.bioTitle} text={profile.bio} />
+            </div>
           </div>
         </section>
-      </div>
-    </>
+    </div>
   )
 }

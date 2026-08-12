@@ -6,7 +6,7 @@ export function ContactSection() {
     <section aria-labelledby="contact-heading" className={styles.section} id="contact">
       <div className={styles.copy}>
         <p>CONTACT · 05</p>
-        <h2 id="contact-heading">有一个值得认真对待的视觉问题？</h2>
+        <h2 id="contact-heading">有项目想聊？一起把想法做成好设计。</h2>
         <span>{profile.name} · {profile.title}</span>
       </div>
 

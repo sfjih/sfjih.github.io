@@ -45,22 +45,6 @@ export function PageTransition({ children }: PageTransitionProps) {
 
   return (
     <div className={styles.stage}>
-      {!reduced ? (
-        <motion.div
-          animate={{ scaleX: [0, 1, 1, 0] }}
-          aria-hidden="true"
-          className={styles.veil}
-          initial={{ scaleX: 0 }}
-          key={`veil-${pathname}`}
-          transition={{
-            delay: 0.35,
-            duration: 1.45,
-            ease: [0.22, 1, 0.36, 1],
-            times: [0, 0.32, 0.58, 1],
-          }}
-        />
-      ) : null}
-
       <AnimatePresence initial={false} mode="wait">
         <AnimatedPage key={pathname} reduced={reduced}>{children}</AnimatedPage>
       </AnimatePresence>

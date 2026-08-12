@@ -6,6 +6,7 @@ import styles from "./ScrollColorQuote.module.css"
 
 type ScrollColorQuoteProps = {
   text: string
+  variant?: "scene" | "heading"
 }
 
 type QuoteWordProps = {
@@ -30,7 +31,7 @@ function QuoteWord({ index, progress, reduced, total, word }: QuoteWordProps) {
   )
 }
 
-export function ScrollColorQuote({ text }: ScrollColorQuoteProps) {
+export function ScrollColorQuote({ text, variant = "scene" }: ScrollColorQuoteProps) {
   const quoteRef = useRef<HTMLElement>(null)
   const reduced = useReducedMotion() ?? false
   const words = Array.from(text)
@@ -40,9 +41,9 @@ export function ScrollColorQuote({ text }: ScrollColorQuoteProps) {
   })
 
   return (
-    <section className={styles.scene} ref={quoteRef}>
-      <div className={styles.sticky}>
-        <p className={styles.quote}>
+    <section className={`${styles.scene} ${variant === "heading" ? styles.headingScene : ""}`} ref={quoteRef}>
+      <div className={`${styles.sticky} ${variant === "heading" ? styles.headingSticky : ""}`}>
+        <p className={`${styles.quote} ${variant === "heading" ? styles.headingQuote : ""}`}>
           <span className={styles.srOnly}>{text}</span>
           {words.map((word, index) => (
             <QuoteWord

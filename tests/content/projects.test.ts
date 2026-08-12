@@ -3,6 +3,7 @@ import { resolve } from "node:path"
 import { describe, expect, it } from "vitest"
 import {
   getFeaturedProjects,
+  getHomepageProjects,
   getProjectBySlug,
   projects,
   type Project,
@@ -24,6 +25,8 @@ function getMediaPaths(project: Project) {
         case "image":
           return [section.src]
         case "imagePair":
+          return section.images.map(({ src }) => src)
+        case "mediaGrid":
           return section.images.map(({ src }) => src)
         case "video":
           return [section.poster, section.src]
@@ -55,6 +58,39 @@ describe("project content", () => {
     })
   })
 
+  it("shows all five projects in the homepage work row, including the personal SLG practice", () => {
+    expect(getHomepageProjects().map(({ slug }) => slug)).toEqual(expectedSlugs)
+  })
+
+  it("keeps the GengGeng case in the exact 01-to-17 source-file sequence", () => {
+    const project = getProjectBySlug("genggeng-brand-system")
+    const orderedImages = project?.sections.flatMap((section) => {
+      if (section.type === "image") return [section.src]
+      if (section.type === "imagePair") return section.images.map(({ src }) => src)
+      return []
+    })
+
+    expect(orderedImages).toEqual(
+      Array.from(
+        { length: 17 },
+        (_, index) => `/works/genggeng-brand-system/sequence/${String(index + 1).padStart(2, "0")}.png`,
+      ),
+    )
+  })
+
+  it("keeps both personal SLG cases with compact settings and keyframe galleries", () => {
+    const project = getProjectBySlug("slg-aigc-practice")
+    const galleries = project?.sections.filter((section) => section.type === "mediaGrid") ?? []
+
+    expect(galleries.map((section) => section.heading)).toEqual(expect.arrayContaining([
+      "案例一｜冰雪生存 SLG",
+      "案例二｜BenBen SLG",
+    ]))
+    expect(galleries.filter((section) => section.variant === "keyframes")).toHaveLength(2)
+    expect(galleries.find((section) => section.heading.includes("案例二｜BenBen SLG") && section.variant === "keyframes")?.images)
+      .toHaveLength(10)
+  })
+
   it("finds every approved project by slug", () => {
     expect(expectedSlugs.map((slug) => getProjectBySlug(slug)?.slug)).toEqual(expectedSlugs)
   })
@@ -66,7 +102,7 @@ describe("project content", () => {
   it("references existing local media and gives every content image useful alt text", () => {
     const mediaPaths = projects.flatMap(getMediaPaths)
 
-    expect(new Set(mediaPaths)).toHaveLength(50)
+    expect(new Set(mediaPaths).size).toBeGreaterThanOrEqual(68)
     for (const mediaPath of mediaPaths) {
       expect(mediaPath, `invalid public media path: ${mediaPath}`).toMatch(/^\/works\//)
       expect(existsSync(resolve(process.cwd(), "public", mediaPath.slice(1))), mediaPath).toBe(true)
@@ -76,6 +112,7 @@ describe("project content", () => {
       project.sections.flatMap((section) => {
         if (section.type === "image") return [section.alt]
         if (section.type === "imagePair") return section.images.map(({ alt }) => alt)
+        if (section.type === "mediaGrid") return section.images.map(({ alt }) => alt)
         return []
       }),
     )
@@ -114,6 +151,28 @@ describe("project content", () => {
     expect(getProjectBySlug("event-materials")?.cover).toBe(
       "/works/event-materials/apparel-short.webp",
     )
+  })
+
+  it("keeps every source image from the Golden Knight key-visual folder in that project only", () => {
+    const keyVisual = getProjectBySlug("golden-knight-key-visual")
+    const materials = getProjectBySlug("event-materials")
+    const keyVisualPaths = keyVisual ? getMediaPaths(keyVisual) : []
+    const materialPaths = materials ? getMediaPaths(materials) : []
+
+    expect(keyVisualPaths).toEqual(expect.arrayContaining([
+      "/works/golden-knight-key-visual/kv-poster.webp",
+      "/works/golden-knight-key-visual/onsite-application.webp",
+      "/works/golden-knight-key-visual/medal.webp",
+      "/works/golden-knight-key-visual/name-card.webp",
+      "/works/golden-knight-key-visual/ticket.webp",
+      "/works/golden-knight-key-visual/sash.webp",
+    ]))
+    expect(materialPaths).not.toEqual(expect.arrayContaining([
+      "/works/event-materials/medal.webp",
+      "/works/event-materials/name-card.webp",
+      "/works/event-materials/ticket.webp",
+      "/works/event-materials/sash.webp",
+    ]))
   })
 
   it("contains no placeholder project data", () => {

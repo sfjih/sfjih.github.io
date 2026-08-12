@@ -1,4 +1,4 @@
-import { SectionHeading } from "@/src/components/motion/SectionHeading"
+import { ScrollColorQuote } from "@/src/components/quote/ScrollColorQuote"
 import { services } from "@/src/content/profile"
 import styles from "./ServiceList.module.css"
 
@@ -7,10 +7,9 @@ export function ServiceList() {
     <section aria-labelledby="services-heading" className={styles.section} id="services">
       <div className={styles.intro}>
         <p className={styles.kicker}>SERVICES · 02</p>
-        <SectionHeading
-          as="h2"
-          className={styles.heading}
-          text="把视觉方向落实为清楚、连贯的内容体验。"
+        <ScrollColorQuote
+          text="设计不是装饰，而是让复杂的信息变得清楚、可信、值得停留。"
+          variant="heading"
         />
       </div>
 

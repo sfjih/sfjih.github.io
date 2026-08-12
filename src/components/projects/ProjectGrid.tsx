@@ -25,7 +25,11 @@ export function ProjectGrid({ projects, showHeading = false }: ProjectGridProps)
       )}
       {showHeading && <span className={styles.srOnly} id="projects-heading">选择作品</span>}
 
-      <div className={styles.grid} data-testid="project-grid">
+      <div
+        className={`${styles.grid} ${showHeading ? styles.homepageRow : ""}`}
+        data-layout={showHeading ? "homepage-row" : "archive-grid"}
+        data-testid="project-grid"
+      >
         {projects.map((project) => <ProjectCard key={project.slug} project={project} />)}
       </div>
     </section>

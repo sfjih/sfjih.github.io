@@ -2,6 +2,13 @@ export type ProjectSection =
   | { type: "text"; heading: string; body: string }
   | { type: "image"; src: string; alt: string; caption?: string }
   | { type: "imagePair"; images: Array<{ src: string; alt: string }> }
+  | {
+      type: "mediaGrid"
+      heading: string
+      label: string
+      variant: "settings" | "keyframes"
+      images: Array<{ src: string; alt: string }>
+    }
   | { type: "video"; src: string; poster: string; title: string }
   | { type: "facts"; items: Array<{ label: string; value: string }> }
 
@@ -159,6 +166,20 @@ export const projects: Project[] = [
         alt: "金骑士杯赛事主视觉现场应用",
       },
       {
+        type: "imagePair",
+        images: [
+          { src: "/works/golden-knight-key-visual/medal.webp", alt: "金骑士杯赛事奖牌设计与成品" },
+          { src: "/works/golden-knight-key-visual/name-card.webp", alt: "金骑士杯赛事姓名牌设计" },
+        ],
+      },
+      {
+        type: "imagePair",
+        images: [
+          { src: "/works/golden-knight-key-visual/ticket.webp", alt: "金骑士杯赛事票根设计" },
+          { src: "/works/golden-knight-key-visual/sash.webp", alt: "金骑士杯赛事绶带设计" },
+        ],
+      },
+      {
         type: "text",
         heading: "主视觉逻辑",
         body: "画面以赛事构图为核心，统筹主视觉元素、字体和色彩，并为不同尺寸与场景保留可延展性。",
@@ -233,7 +254,7 @@ export const projects: Project[] = [
       {
         type: "text",
         heading: "从设计到落地",
-        body: "项目涵盖空间导视、工装、奖牌、票证与现场应用，通过打样沟通、供应商对接和现场执行完成从画面到成品的转化。",
+        body: "项目涵盖空间导视、工装与现场应用，通过打样沟通、供应商对接和现场执行完成从画面到成品的转化。",
       },
       {
         type: "imagePair",
@@ -253,20 +274,6 @@ export const projects: Project[] = [
         type: "image",
         src: "/works/event-materials/apparel-pattern.webp",
         alt: "赛事工装图案与版式细节",
-      },
-      {
-        type: "imagePair",
-        images: [
-          { src: "/works/event-materials/medal.webp", alt: "赛事奖牌设计与成品" },
-          { src: "/works/event-materials/ticket.webp", alt: "赛事票券设计" },
-        ],
-      },
-      {
-        type: "imagePair",
-        images: [
-          { src: "/works/event-materials/sash.webp", alt: "赛事授带物料设计" },
-          { src: "/works/event-materials/name-card.webp", alt: "赛事工作证与姓名牌设计" },
-        ],
       },
       {
         type: "imagePair",
@@ -371,8 +378,95 @@ export const projects: Project[] = [
   },
 ]
 
+const genggengSequence = Array.from({ length: 17 }, (_, index) => ({
+  type: "image" as const,
+  src: `/works/genggeng-brand-system/sequence/${String(index + 1).padStart(2, "0")}.png`,
+  alt: `耿耿全案设计第 ${String(index + 1).padStart(2, "0")} 张`,
+}))
+
+const frozenSettings = [
+  { src: "/works/slg-aigc-practice/protagonist.webp", alt: "冰雪生存 SLG 主角设定" },
+  { src: "/works/slg-aigc-practice/architecture.webp", alt: "冰雪生存 SLG 建筑与环境设定" },
+  { src: "/works/slg-aigc-practice/enemy-faction.webp", alt: "冰雪生存 SLG 敌对阵营设定" },
+]
+
+const frozenKeyframes = Array.from({ length: 8 }, (_, index) => ({
+  src: `/works/slg-aigc-practice/keyframe-${String(index + 1).padStart(2, "0")}.webp`,
+  alt: `冰雪生存 SLG 关键帧 ${String(index + 1).padStart(2, "0")}`,
+}))
+
+const benbenSettings = Array.from({ length: 5 }, (_, index) => ({
+  src: `/works/slg-aigc-practice/benben-slg/setting-${String(index + 1).padStart(2, "0")}.png`,
+  alt: `BenBen SLG 设定图 ${String(index + 1).padStart(2, "0")}`,
+}))
+
+const benbenKeyframes = Array.from({ length: 10 }, (_, index) => ({
+  src: `/works/slg-aigc-practice/benben-slg/keyframe-${String(index + 1).padStart(2, "0")}.png`,
+  alt: `BenBen SLG 关键帧 ${String(index + 1).padStart(2, "0")}`,
+}))
+
+projects[0] = {
+  ...projects[0],
+  sections: genggengSequence,
+}
+
+projects[4] = {
+  ...projects[4],
+  sections: [
+    {
+      type: "text",
+      heading: "个人练习 / 非商业项目",
+      body: "两组 SLG AIGC 个人练习均按原案例结构保留：设定图、关键帧与竖屏成片。",
+    },
+    {
+      type: "mediaGrid",
+      heading: "案例一｜冰雪生存 SLG",
+      label: "设定图",
+      variant: "settings",
+      images: frozenSettings,
+    },
+    {
+      type: "mediaGrid",
+      heading: "案例一｜冰雪生存 SLG · 关键帧",
+      label: "关键帧",
+      variant: "keyframes",
+      images: frozenKeyframes,
+    },
+    {
+      type: "video",
+      src: "/works/slg-aigc-practice/final-video.mp4",
+      poster: "/works/slg-aigc-practice/keyframe-01.webp",
+      title: "冰雪生存 SLG AIGC 竖屏成片",
+    },
+    {
+      type: "mediaGrid",
+      heading: "案例二｜BenBen SLG",
+      label: "设定图",
+      variant: "settings",
+      images: benbenSettings,
+    },
+    {
+      type: "mediaGrid",
+      heading: "案例二｜BenBen SLG · 关键帧",
+      label: "关键帧",
+      variant: "keyframes",
+      images: benbenKeyframes,
+    },
+    {
+      type: "video",
+      src: "/works/slg-aigc-practice/benben-slg/final-video.mp4",
+      poster: "/works/slg-aigc-practice/benben-slg/collection-overview-web.webp",
+      title: "BenBen SLG AIGC 竖屏成片",
+    },
+  ],
+}
+
 export function getFeaturedProjects() {
   return projects.filter((project) => project.featured)
+}
+
+export function getHomepageProjects() {
+  return projects
 }
 
 export function getProjectBySlug(slug: string) {

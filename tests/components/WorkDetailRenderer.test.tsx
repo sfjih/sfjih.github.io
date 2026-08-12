@@ -16,3 +16,25 @@ it("renders text, image and facts sections", () => {
   expect(screen.getByAltText("项目占位视觉")).toBeInTheDocument()
   expect(screen.getByText("视觉设计")).toBeInTheDocument()
 })
+
+it("renders an SLG keyframe gallery as a compact multi-column group", () => {
+  render(
+    <WorkDetailRenderer
+      sections={[
+        {
+          type: "mediaGrid",
+          heading: "案例一｜冰雪生存 SLG",
+          label: "关键帧",
+          variant: "keyframes",
+          images: [
+            { src: "/works/slg-aigc-practice/keyframe-01.webp", alt: "关键帧一" },
+            { src: "/works/slg-aigc-practice/keyframe-02.webp", alt: "关键帧二" },
+          ],
+        },
+      ]}
+    />,
+  )
+
+  expect(screen.getByRole("heading", { name: "案例一｜冰雪生存 SLG" })).toBeInTheDocument()
+  expect(screen.getByLabelText("案例一｜冰雪生存 SLG 关键帧")).toHaveAttribute("data-variant", "keyframes")
+})
