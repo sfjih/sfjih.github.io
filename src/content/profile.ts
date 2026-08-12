@@ -27,7 +27,7 @@ export const profile: Profile = {
   bio: "专注品牌视觉、IP 全案与赛事物料设计，让创意从画面延伸到真实场景。",
   contactLinks: [
     { label: "Email", href: "mailto:hyh2107567710@163.com" },
-    { label: "简历", href: "/何宇航-个人简历.pdf" },
+    { label: "简历", href: "/何宇航-平面品牌视觉设计师-简历.pdf" },
   ],
 }
 

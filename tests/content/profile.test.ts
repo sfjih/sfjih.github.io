@@ -10,7 +10,7 @@ it("publishes the approved real profile, contact, services, and proof facts", ()
   })
   expect(profile.contactLinks).toEqual([
     { label: "Email", href: "mailto:hyh2107567710@163.com" },
-    { label: "简历", href: "/何宇航-个人简历.pdf" },
+    { label: "简历", href: "/何宇航-平面品牌视觉设计师-简历.pdf" },
   ])
   expect(services).toEqual([
     { title: "品牌与 IP", description: "角色设定、Logo、色彩规范、表情与周边延展。" },
@@ -23,6 +23,6 @@ it("publishes the approved real profile, contact, services, and proof facts", ()
     { label: "量产交付", value: "200+", description: "赛事工装与志愿者马甲成品交付。" },
     { label: "赛事执行", value: "04", description: "金骑士杯已执行四站赛事。" },
   ])
-  expect(existsSync(resolve(process.cwd(), "public", "何宇航-个人简历.pdf"))).toBe(true)
+  expect(existsSync(resolve(process.cwd(), "public", "何宇航-平面品牌视觉设计师-简历.pdf"))).toBe(true)
   expect(JSON.stringify({ profile, proofCards, services })).not.toMatch(/占位|整理中|placeholder@example\.com/)
 })

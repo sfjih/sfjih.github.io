@@ -428,7 +428,10 @@ test("homepage uses real profile content and a two-tone scrolling portrait", asy
     "href",
     "mailto:hyh2107567710@163.com",
   )
-  await expect(page.getByRole("link", { name: "简历" })).toHaveAttribute("href", "/何宇航-个人简历.pdf")
+  await expect(page.getByRole("link", { name: "简历" })).toHaveAttribute(
+    "href",
+    "/何宇航-平面品牌视觉设计师-简历.pdf",
+  )
   await expect(page.getByText(/占位|整理中|placeholder@example\.com/)).toHaveCount(0)
 
   const front = page.getByAltText("何宇航证件照，黑白正面")
