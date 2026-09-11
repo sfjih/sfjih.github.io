@@ -9,7 +9,7 @@ function card(i,copy){const button=document.createElement('button');button.class
 for(let copy=0;copy<3;copy++){const group=document.createElement('div');group.className='carousel-group';if(copy!==1)group.setAttribute('aria-hidden','true');for(let i=0;i<order.length;i++)group.append(card(i,copy!==1));track.append(group);}
 function measure(){const w=track.firstElementChild.getBoundingClientRect().width;if(w>0){phase=phase/groupWidth*w;groupWidth=w;}}
 new ResizeObserver(measure).observe(track.firstElementChild);measure();
-viewport.addEventListener('pointerenter',()=>hover=true);viewport.addEventListener('pointerleave',()=>hover=false);viewport.addEventListener('focusin',e=>focused=e.target.matches(':focus-visible'));viewport.addEventListener('focusout',e=>{focused=viewport.contains(e.relatedTarget)});
+viewport.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')hover=true});viewport.addEventListener('pointerleave',e=>{if(e.pointerType!=='touch')hover=false});viewport.addEventListener('focusin',e=>focused=e.target.matches(':focus-visible'));viewport.addEventListener('focusout',e=>{focused=viewport.contains(e.relatedTarget)});
 function pauseUI(){$('gallery-toggle').textContent=manualPause?'继续轮播':'暂停轮播';$('gallery-toggle').setAttribute('aria-pressed',String(manualPause));}
 $('gallery-toggle').onclick=()=>{manualPause=!manualPause;velocity=0;pauseUI()};reduced.addEventListener('change',e=>{manualPause=e.matches;velocity=0;pauseUI()});pauseUI();
 viewport.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();phase=(phase+(e.key==='ArrowRight'?1:-1)*280+groupWidth)%groupWidth;}});
@@ -41,7 +41,9 @@ function endDrag(e,cancelled=false){
  if(e?.pointerType==='touch')hover=false;
 }
 viewport.addEventListener('pointerup',e=>endDrag(e));viewport.addEventListener('pointercancel',e=>endDrag(e,true));
-viewport.addEventListener('lostpointercapture',e=>endDrag(e,true));
+// Touch starts with implicit capture on the image. Moving capture to the
+// viewport emits a bubbling lost event from that image, not an ended drag.
+viewport.addEventListener('lostpointercapture',e=>{if(e.target===viewport)endDrag(e,true)});
 window.addEventListener('pointerup',e=>endDrag(e));window.addEventListener('blur',()=>{velocity=0;endDrag(null,true)});
 viewport.addEventListener('click',e=>{if(suppressClick&&e.detail!==0){e.preventDefault();e.stopImmediatePropagation();suppressClick=false;}},true);
 $('close').onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{if(returnFocus)returnFocus.focus({preventScroll:true})});
